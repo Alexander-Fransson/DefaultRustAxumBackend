@@ -22,4 +22,19 @@ docker run --name postgres-container-name -e POSTGRES_PASSWORD=super_secret_pass
 --name sets the name of the container, -e sets enviromental variables -p sets the port as PORT_ON_YOUR_COMPUTER:PORT_IN_CONTAINER (5432 is postgres default container) and postgres is the default postgres image on docker hub.
 If you want it to run in the background you can add -d before postgres but I dont recomend it as you will probably forget about it.
 
-However this command is quite verbose so it is probably better to automate it
+However this command is quite verbose so it is probably better to automate it.
+Also it is probably woth mentioning that you need docker-cli installed on your your computer
+Just look up how to install docker cli and remember that you dont look for docker desktop
+That is the gui bloat that docker whant you to get used to so you will pay for it later
+
+Creating a database continer can be done easyer using a docker compose file. 
+However before we begin with the docker compose file it migh be good to mention
+the difference between a docker compose file and a docker file since you unsually mix the two up
+So A Dockerfile is used to help docker create an image f.ex from a file on your computer or something on docker hub
+on the other hand a docker compose file describes how to run an image and its containers
+
+For a demostration: https://www.youtube.com/watch?v=JmyAMcKUNYA
+
+I created a docker compose file in: backend/db/docker-compose.yml
+Check it out if you wonder how to set it up and what to do'
+JSYK the version: parameter is deprecated if you see it in places

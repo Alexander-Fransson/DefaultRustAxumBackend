@@ -1,0 +1,14 @@
+### run with :$ docker compose up
+
+services:
+  test_db_service:           # names the service
+    image: postgres          # run the default postgres image from docker hub
+    container_name: test_db  # names the container
+    restart: always          # restart the container if it crashes
+    environment:             # set environment variables
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: super_secret_password
+      POSTGRES_DB: test_db
+    
+    ports:
+      - "5011:5432"          # the port to expose port_on_your_computer:port_in_container
