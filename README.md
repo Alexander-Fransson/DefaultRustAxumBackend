@@ -54,3 +54,5 @@ You could set the environmental variables in a .env file but aparently .env is n
 I tried to make the time string shorter but it proved more difficult than it was worh ro not just remove it
 
 ### 3. Configuring environment variables
+
+As the next step I made the functions that retrive the environment variables in backend/src/config_env.rs although I maybe did not need it just yet.

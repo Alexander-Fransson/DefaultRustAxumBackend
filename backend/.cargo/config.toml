@@ -1,3 +1,4 @@
 [env]
 
 RUST_LOG = "backend=debug"
+WEB_FOLDER = "standin for web folder"
