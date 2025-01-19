@@ -1,1 +1,7 @@
 target/
+
+# These folders probably have secrets in them that should not be uploaded on github 
+# I have them on here for educational purpouses
+
+# db/
+# .cargo/config.toml

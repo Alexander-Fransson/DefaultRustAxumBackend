@@ -38,3 +38,19 @@ For a demostration: https://www.youtube.com/watch?v=JmyAMcKUNYA
 I created a docker compose file in: backend/db/docker-compose.yml
 Check it out if you wonder how to set it up and what to do'
 JSYK the version: parameter is deprecated if you see it in places
+
+### 2. Setting up tracing 
+
+So apparently interpreting log messages in traditional asyncronus rust code can be difficult.
+The "tracing" crate helps rust programs to "collect scoped, structured, and async-aware diagnostics" and the "tracing_subscriber" crate "crate contains tools for composing subscribers out of smaller units of behaviour".
+Quotes are taken from the official docks.rs of the crates.
+This might not be nececary but it seams harmless and useful and is used by Jermy Chone in the rust axum production video accessed 2025.
+To use it I added the tracing and tracing-subscriber crates as well as the feature env-filter to the tracing subscriber.
+The tracing subscriber pipeline in main is what makes the info! debug! and other tracing mactos work.
+The with env filter filters the loggs to f.ex only show info or higher using the RUST_LOG environmental variable which may be set in the [env] section in backend/.cargo/config.toml
+you can set it to f.ex "info" or "debug" to only show logs with sush levels or higher.
+You can also limit the source of the logs by specifying the crate name in the variable name like f.ex in this case "backend=info".
+You could set the environmental variables in a .env file but aparently .env is not cool anymore and according to J. Chone setting the variable outside the application before it is run in this manner is what you want in a production application since it is more similar to how it is done in Kubernetes. I put the tracing logic in a function that is run in main and moved it to backend/src/log/tracer_config.rs
+I tried to make the time string shorter but it proved more difficult than it was worh ro not just remove it
+
+### 3. Configuring environment variables

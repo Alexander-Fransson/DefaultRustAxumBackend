@@ -1,13 +1,10 @@
-fn main() {
+use log::tracer_config::enable_tracing;
 
-    /* TODO
+mod log;
 
-    + seed database
-    + get users
-    + create user
-    + login middleware
-    + other crud
-     */
+#[tokio::main]
+async fn main() {
 
-    println!("Hello, world!");
+    enable_tracing();
+    
 }
