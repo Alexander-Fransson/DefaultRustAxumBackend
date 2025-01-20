@@ -24,7 +24,6 @@ impl EnvVariableContainer {
     }
 }
 
-
 fn get_specific_var_from_env(name: &'static str) -> Result<String> {
     env::var(name).map_err(|_| Error::CannotFindEnvWithSuchName(name))
 }

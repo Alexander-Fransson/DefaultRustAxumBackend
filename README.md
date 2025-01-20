@@ -56,3 +56,11 @@ I tried to make the time string shorter but it proved more difficult than it was
 ### 3. Configuring environment variables
 
 As the next step I made the functions that retrive the environment variables in backend/src/config_env.rs although I maybe did not need it just yet.
+
+### 4. Seeding DB
+
+I think Ill only create a user table to keep it limited to the basics in this repo
+We also need to add the features "postgres", "uuid", "time" and "runtime-tokio-rustls" to sqlx
+Most of this is self explanitory, time adds time features, uuid allows for uuids, postgres allows sqlx to interact with postgres specifically and "runtime-tokio-rustls allows sqlx to adapt to the async timeing of tokio
+I made the sql files to create a basic database and a user with an index to the username and a unique constraint for the email and password together in backend/db/sql/reset_db.
+
