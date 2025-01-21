@@ -63,4 +63,7 @@ I think Ill only create a user table to keep it limited to the basics in this re
 We also need to add the features "postgres", "uuid", "time" and "runtime-tokio-rustls" to sqlx
 Most of this is self explanitory, time adds time features, uuid allows for uuids, postgres allows sqlx to interact with postgres specifically and "runtime-tokio-rustls allows sqlx to adapt to the async timeing of tokio
 I made the sql files to create a basic database and a user with an index to the username and a unique constraint for the email and password together in backend/db/sql/reset_db.
+I also created a file for housing the functions to seed the db in a utils folder under the _dev. I think the underscore signals that it is not a part of the main application.
+I also added the postgres connection to the env and redeclared the reset db function under the dev utils.
+I relized that there is a whole thing about migrations in sqlx and I think that is how the DB is suppoesed to be initialized.
 

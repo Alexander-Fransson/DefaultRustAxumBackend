@@ -2,3 +2,4 @@
 
 RUST_LOG = "backend=debug"
 WEB_FOLDER = "standin for web folder"
+DB_CONNECTION_STRING = "postgres://root:super_secret_password@localhost:5011/test_db" 

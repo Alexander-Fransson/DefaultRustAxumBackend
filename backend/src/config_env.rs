@@ -14,12 +14,14 @@ pub fn get_env_variables() -> &'static EnvVariableContainer {
 
 #[allow(non_snake_case)]
 pub struct EnvVariableContainer {
-    pub WEB_FOLDER: String
+    pub WEB_FOLDER: String,
+    pub DB_CONNECTION_STRING: String
 }
 impl EnvVariableContainer {
     pub fn load_vars_from_env() -> Result<EnvVariableContainer> {
         Ok(EnvVariableContainer {
-            WEB_FOLDER: get_var_from_env_parsed("WEB_FOLDER")?
+            WEB_FOLDER: get_var_from_env_parsed("WEB_FOLDER")?,
+            DB_CONNECTION_STRING: get_var_from_env_parsed("DB_CONNECTION_STRING")?
         })
     }
 }
