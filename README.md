@@ -66,4 +66,9 @@ I made the sql files to create a basic database and a user with an index to the 
 I also created a file for housing the functions to seed the db in a utils folder under the _dev. I think the underscore signals that it is not a part of the main application.
 I also added the postgres connection to the env and redeclared the reset db function under the dev utils.
 I relized that there is a whole thing about migrations in sqlx and I think that is how the DB is suppoesed to be initialized.
-
+For migrations to take into account changes in the sql files you apparently need a build script. You can generate this using sqlx cli by using sqlx cli. 
+```bash
+cargo install sqlx-cli
+sqlx migrate build-script
+```
+I belive you could also just add the build.rs that prints the required line manually

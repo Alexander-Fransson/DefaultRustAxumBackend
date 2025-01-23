@@ -10,5 +10,18 @@ pub async fn reset_db() -> Result<(), sqlx::Error> {
     .await?;   
 
     println!("connected to db {:?}", test);
+
+    // migrate the reset db
+    sqlx::migrate!("./db/sql/reset_db")
+    .run(&pool)
+    .await
+    .unwrap();
+
+    let test2 = sqlx::query("SELECT * FROM \"user\"")
+    .fetch_one(&pool)
+    .await?;  
+
+    println!("user table: {:#?}", test2);
+
     Ok(())
 }

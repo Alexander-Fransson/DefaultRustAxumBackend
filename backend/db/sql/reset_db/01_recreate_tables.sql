@@ -4,7 +4,7 @@ CREATE TABLE "user" (
     email VARCHAR(255) NOT NULL,
     "password" VARCHAR(255) NOT NULL,
 
-    CONSTRAINT email_and_password_unique_together UNIQUE (email, "password"),
+    CONSTRAINT email_and_password_unique_together UNIQUE (email, "password")
 );
 
 -- An index is a way to speed up queries
