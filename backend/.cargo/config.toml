@@ -2,4 +2,5 @@
 
 RUST_LOG = "backend=debug"
 WEB_FOLDER = "standin for web folder"
-DB_CONNECTION_STRING = "postgres://root:super_secret_password@localhost:5011/test_db" 
+DB_CONNECTION_STRING = "postgres://postgres_user:super_secret_password@localhost:5011/test_db"
+DB_DEFAULT_USER_CONNECTION_STRING = "postgres://madeup_default_user:super_secret_password@localhost:5011"

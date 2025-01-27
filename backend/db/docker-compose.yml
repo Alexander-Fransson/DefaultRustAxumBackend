@@ -6,9 +6,9 @@ services:
     container_name: test_db  # names the container
     restart: always          # restart the container if it crashes
     environment:             # set environment variables
-      POSTGRES_USER: root
+      POSTGRES_USER: madeup_default_user
       POSTGRES_PASSWORD: super_secret_password
-      POSTGRES_DB: test_db
+      #POSTGRES_DB: test_db  # if you want to create a database right away
     
     ports:
       - "5011:5432"          # the port to expose port_on_your_computer:port_in_container
