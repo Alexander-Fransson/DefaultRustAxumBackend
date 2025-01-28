@@ -72,3 +72,5 @@ cargo install sqlx-cli
 sqlx migrate build-script
 ```
 I belive you could also just add the build.rs that prints the required line manually
+
+After some development...
