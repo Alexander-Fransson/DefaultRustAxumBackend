@@ -8,11 +8,18 @@ pub enum Error {
     CannotFindEnvWithSuchName(&'static str),
     FailedToParse(&'static str),
 	DbSettupError(db_setup::Error),
+	Io(std::io::Error)
 }
 
 impl From<db_setup::Error> for Error {
 	fn from(err: db_setup::Error) -> Self {
 		Self::DbSettupError(err)
+	}
+}
+
+impl From<std::io::Error> for Error {
+	fn from(err: std::io::Error) -> Self {
+		Self::Io(err)
 	}
 }
 

@@ -1,7 +1,9 @@
-use config_env::get_env_variables;
 use db_setup::{make_migrations, reset_db, create_app_user_connection_pool};
 use log::tracer_config::enable_tracing;
 use tracing::info;
+use axum::Router;
+use axum::routing::get;
+use tokio::net::TcpListener;
 
 mod log;
 mod config_env;
@@ -22,11 +24,15 @@ async fn main() -> Result<()> {
     
     reset_db().await?;
     make_migrations(&pool).await?;
-    
-    let web_folder = &get_env_variables().WEB_FOLDER;
-    let db_connection = &get_env_variables().DB_CONNECTION_STRING;
-    info!("the web folder got form the env var is: {}", web_folder);
-    info!("the db connection string got form the env var is: {}", db_connection);
 
+    let main_router = Router::new()
+    .route("/hello_word", get(|| async {"Hello, World!"})); 
+
+    let listener = TcpListener::bind("127.0.0.1:3000").await?;
+
+    info!("Listening on http://127.0.0.1:3000");
+
+    axum::serve(listener, main_router).await?;
+    
     Ok(())
 }

@@ -79,3 +79,11 @@ I also think I should create some error handeling for the db setup functions as 
 To have sql errors in my error module I need serde_with and serde 
 I created the errors in backend/src/db_setup/error.rs
 I think you can make the froms easyer with the thiserror crate but I kindof like doing the forms manually so wont use thiserror
+Froms are the stuff that makes the ? operator work and you have to have them for all the errors in the peckingorder
+
+### 5. Create the server and router
+First I just added a router to the main, somehting of this sort: 
+```rs
+let main_router = Router::new().route("/hello_word", get(|| async {"Hello, World!"})); 
+```
+I also added the listener and axum server as well as the std::io::Error and from required for the question mark operators to work
