@@ -72,5 +72,8 @@ cargo install sqlx-cli
 sqlx migrate build-script
 ```
 I belive you could also just add the build.rs that prints the required line manually
-
-After some development...
+After some development I realized that you cannot run the sql that recreates the DB using the migration macro becouse it eliminates the session and the use you use in your connection string
+The solustion to this is to create a default user and an app user and have the default user execute the sql in the files through query while the actual settingup and seeding can be done through macro.
+To do this I split the files for the differnet functions in separate files in the db/sql folder named descriptively and created different functions for this in the db_setup model
+I also think I should create some error handeling for the db setup functions as there are some errors like the file reading which are not covered by sql.
+To have sql errors in my error module I probably need serde_with 

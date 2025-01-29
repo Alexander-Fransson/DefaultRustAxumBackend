@@ -7,10 +7,11 @@ mod tests {
         create_connection_pool,
         make_migrations,
         reset_db,
+        Result, 
     };
 
     #[tokio::test]
-    async fn test_create_connection_pool() -> Result<(), sqlx::Error> {
+    async fn test_create_connection_pool() -> Result<()> {
         let connect_as_default_user = &get_env_variables().DB_DEFAULT_USER_CONNECTION_STRING;
         let pool = create_connection_pool(connect_as_default_user).await?;
 
@@ -25,7 +26,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_make_migrations() -> Result<(), sqlx::Error> {
+    async fn test_make_migrations() -> Result<()> {
         reset_db().await?;
 
         let connect_as_service_user = &get_env_variables().DB_CONNECTION_STRING;
