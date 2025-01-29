@@ -53,3 +53,10 @@ pub async fn create_connection_pool(connection_string: &str) -> Result<sqlx::Poo
 
     Ok(pool)
 }
+
+pub async fn create_app_user_connection_pool() -> Result<sqlx::Pool<sqlx::Postgres>> {
+    let connect_as_service_user = &get_env_variables().DB_CONNECTION_STRING;
+    let pool = create_connection_pool(connect_as_service_user).await?;
+
+    Ok(pool)
+}

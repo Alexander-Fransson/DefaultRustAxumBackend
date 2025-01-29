@@ -1,5 +1,5 @@
 use config_env::get_env_variables;
-use db_setup::{make_migrations, reset_db};
+use db_setup::{make_migrations, reset_db, create_app_user_connection_pool};
 use log::tracer_config::enable_tracing;
 use tracing::info;
 
@@ -17,9 +17,11 @@ async fn main() -> Result<()> {
     enable_tracing();
     
     //need to create an error that incorporates the sqlx error
+
+    let pool = create_app_user_connection_pool().await?;
     
-    //reset_db().await?;
-    //make_migrations().await?;
+    reset_db().await?;
+    make_migrations(&pool).await?;
     
     let web_folder = &get_env_variables().WEB_FOLDER;
     let db_connection = &get_env_variables().DB_CONNECTION_STRING;
