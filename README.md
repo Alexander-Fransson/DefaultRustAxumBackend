@@ -87,3 +87,11 @@ First I just added a router to the main, somehting of this sort:
 let main_router = Router::new().route("/hello_word", get(|| async {"Hello, World!"})); 
 ```
 I also added the listener and axum server as well as the std::io::Error and from required for the question mark operators to work
+
+### 6. Create the list users route.
+maybe a rest api pattern...
+Jermy chone seams to have a clever architecture primarially split in a "web" layer and a "model" layer
+The "model" layer handles normalization, database communitation and security aka data access
+The "web" layer handles authentication and authorization.
+Theese names are somewhat standard however I find them to be too abstract, therefore I will call the model folder data_access
+Likewise I will call the web layer authentication

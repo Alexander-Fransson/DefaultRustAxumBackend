@@ -1,4 +1,8 @@
-use db_setup::{make_migrations, reset_db, create_app_user_connection_pool};
+use db_setup::{
+    make_migrations, 
+    reset_db, 
+    create_serive_user_connection_pool
+};
 use log::tracer_config::enable_tracing;
 use tracing::info;
 use axum::Router;
@@ -10,6 +14,8 @@ mod config_env;
 mod error;
 mod utils;
 mod db_setup;
+mod data_access;
+mod authentication;
 
 pub use error::{Error, Result};
 
@@ -18,9 +24,7 @@ async fn main() -> Result<()> {
 
     enable_tracing();
     
-    //need to create an error that incorporates the sqlx error
-
-    let pool = create_app_user_connection_pool().await?;
+    let pool = create_serive_user_connection_pool().await?;
     
     reset_db().await?;
     make_migrations(&pool).await?;

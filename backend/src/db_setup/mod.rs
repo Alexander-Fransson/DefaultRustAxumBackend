@@ -4,10 +4,10 @@ pub mod error;
 use sqlx::postgres::PgPoolOptions;
 use tracing::info;
 use std::time::Duration;
-use sqlx::Pool;
-use sqlx::Postgres;
+use sqlx::{Pool,Postgres};
 use crate::config_env::get_env_variables;
 use std::fs;
+
 pub use error::{Error, Result};
 
 // TODO: include these errors in the main error module
@@ -42,9 +42,9 @@ pub async fn make_migrations(pool: &Pool<Postgres>) -> Result<()> {
     Ok(())
 }
 
-pub async fn create_connection_pool(connection_string: &str) -> Result<sqlx::Pool<sqlx::Postgres>> {
+pub async fn create_connection_pool(connection_string: &str) -> Result<Pool<Postgres>> {
     let pool =PgPoolOptions::new()
-    .max_connections(1)
+    .max_connections(5)
     .acquire_timeout(Duration::from_secs(5))
     .connect(connection_string)
     .await?;
@@ -54,7 +54,7 @@ pub async fn create_connection_pool(connection_string: &str) -> Result<sqlx::Poo
     Ok(pool)
 }
 
-pub async fn create_app_user_connection_pool() -> Result<sqlx::Pool<sqlx::Postgres>> {
+pub async fn create_serive_user_connection_pool() -> Result<Pool<Postgres>> {
     let connect_as_service_user = &get_env_variables().DB_CONNECTION_STRING;
     let pool = create_connection_pool(connect_as_service_user).await?;
 
