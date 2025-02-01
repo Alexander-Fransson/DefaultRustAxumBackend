@@ -3,7 +3,7 @@
 mod tests {
     use sqlx::Row; // needed to use .get on PgRow
     use crate::config_env::get_env_variables;
-    use crate::db_setup::{
+    use crate::data_access::db_setup::{
         create_connection_pool,
         make_migrations,
         reset_db,

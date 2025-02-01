@@ -95,3 +95,4 @@ The "model" layer handles normalization, database communitation and security aka
 The "web" layer handles authentication and authorization.
 Theese names are somewhat standard however I find them to be too abstract, therefore I will call the model folder data_access
 Likewise I will call the web layer authentication
+I moved the db_setup folder to the data access layer and created a dataaccess manager with an implemented new function that makes the migrations, resets the db and returns a connection pool that can only be used in the data access module

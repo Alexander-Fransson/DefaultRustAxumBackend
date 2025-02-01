@@ -1,5 +1,5 @@
 use std::fmt::Debug;
-use crate::db_setup;
+use crate::data_access;
 
 pub type Result<T> = core::result::Result<T, Error>;
 
@@ -7,13 +7,13 @@ pub type Result<T> = core::result::Result<T, Error>;
 pub enum Error {
     CannotFindEnvWithSuchName(&'static str),
     FailedToParse(&'static str),
-	DbSettupError(db_setup::Error),
+	DataAccessError(data_access::Error),
 	Io(std::io::Error)
 }
 
-impl From<db_setup::Error> for Error {
-	fn from(err: db_setup::Error) -> Self {
-		Self::DbSettupError(err)
+impl From<data_access::Error> for Error {
+	fn from(err: data_access::Error) -> Self {
+		Self::DataAccessError(err)
 	}
 }
 
