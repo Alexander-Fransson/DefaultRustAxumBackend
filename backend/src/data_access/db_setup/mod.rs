@@ -11,7 +11,7 @@ use std::fs;
 pub use error::{Error, Result};
 
 // TODO: include these errors in the main error module
-pub async fn reset_db() -> Result<()> {
+pub async fn _reset_db() -> Result<()> {
     let connect_as_default_user = &get_env_variables().DB_DEFAULT_USER_CONNECTION_STRING;
     let pool = create_connection_pool(connect_as_default_user).await?;
 

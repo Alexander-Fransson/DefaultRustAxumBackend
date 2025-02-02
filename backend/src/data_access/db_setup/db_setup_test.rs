@@ -6,7 +6,7 @@ mod tests {
     use crate::data_access::db_setup::{
         create_connection_pool,
         make_migrations,
-        reset_db,
+        _reset_db,
         Result, 
     };
 
@@ -27,7 +27,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_make_migrations() -> Result<()> {
-        reset_db().await?;
+        _reset_db().await?;
 
         let connect_as_service_user = &get_env_variables().DB_CONNECTION_STRING;
         let pool = create_connection_pool(connect_as_service_user).await?;
