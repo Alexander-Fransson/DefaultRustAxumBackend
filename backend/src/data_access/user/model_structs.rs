@@ -1,5 +1,8 @@
 use serde::{Deserialize, Serialize};
 use sqlx::prelude::FromRow;
+use proc_macros::GetStructFields;
+use crate::utils::traits_for_proc_macros::GetStructFields;
+
 // maybe this shall be moved to a dedicated model_structs folder to allow the frontend to use them
 // although for axum only this django like structure might suffice
 
@@ -12,7 +15,7 @@ pub struct User {
     pub password: String
 }
 
-#[derive(Serialize, FromRow, Clone, Debug)]
+#[derive(Serialize, FromRow, Clone, Debug, GetStructFields)]
 pub struct Username {
     pub username: String
 }

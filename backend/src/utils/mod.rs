@@ -1,4 +1,5 @@
 pub mod error;
+pub mod traits_for_proc_macros;
 
 use std::collections::HashMap;
 use serde::Serialize;
@@ -25,6 +26,8 @@ pub fn turn_struct_with_serde_serialize_into_hashmap<T:Serialize>(data: T)
 
     Ok(hashmap?)
 }
+
+// also make tests for this
 
 // macro rules operate on a level which makes it unable to access the keys of a struct before it is created
 // I realy need to learn more about proc macros and so on but for the base I think that the derive macro you did will probably suffice

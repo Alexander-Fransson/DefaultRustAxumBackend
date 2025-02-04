@@ -1,0 +1,27 @@
+[package]
+name = "proc-macros"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+quote = "1.0.38"
+syn = "2.0.98"
+
+# Proc macros are run at compile time so 
+# dont run system commands, 
+# dont access files, 
+# dont use usnafe code, 
+# dont allow users to inject code
+# only use trusted dependencies
+# dont read env variables
+# restrict the input types
+
+# also error handling is impossible in macros, you can only panic or use compiler_error
+
+# proc macros are so called unhygenic which means that they will be compiled as raw code in the context they are used
+# this means that you need to make sure they can be used in as many contexts as possible.
+# for example use ::syn::option::Option<T> instead of Option<T>, unique function names and absolute file paths
+
