@@ -1,5 +1,6 @@
 pub mod error;
 pub mod traits_for_proc_macros;
+mod utils_test;
 
 use std::collections::HashMap;
 use serde::Serialize;

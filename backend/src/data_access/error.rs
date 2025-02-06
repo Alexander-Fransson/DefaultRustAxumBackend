@@ -6,12 +6,19 @@ pub type Result<T> = core::result::Result<T, Error>;
 #[derive(Debug)]
 pub enum Error {
 	DbSettupError(db_setup::Error),
+	QueryFailed(sqlx::Error),
 	//Io(std::io::Error)
 }
 
 impl From<db_setup::Error> for Error {
 	fn from(err: db_setup::Error) -> Self {
 		Self::DbSettupError(err)
+	}
+}
+
+impl From<sqlx::Error> for Error {
+	fn from(err: sqlx::Error) -> Self {
+		Self::QueryFailed(err)
 	}
 }
 
