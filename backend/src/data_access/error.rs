@@ -1,5 +1,6 @@
 use std::fmt::Debug;
 use super::db_setup;
+use crate::utils;
 
 pub type Result<T> = core::result::Result<T, Error>;
 
@@ -7,6 +8,7 @@ pub type Result<T> = core::result::Result<T, Error>;
 pub enum Error {
 	DbSettupError(db_setup::Error),
 	QueryFailed(sqlx::Error),
+	Utils(utils::error::Error),
 	//Io(std::io::Error)
 }
 
@@ -19,6 +21,12 @@ impl From<db_setup::Error> for Error {
 impl From<sqlx::Error> for Error {
 	fn from(err: sqlx::Error) -> Self {
 		Self::QueryFailed(err)
+	}
+}
+
+impl From<utils::error::Error> for Error {
+	fn from(err: utils::error::Error) -> Self {
+		Self::Utils(err)
 	}
 }
 

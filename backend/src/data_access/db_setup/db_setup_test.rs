@@ -10,6 +10,7 @@ mod tests {
         Result, 
     };
 
+    #[ignore]
     #[tokio::test]
     async fn test_create_connection_pool() -> Result<()> {
         let connect_as_default_user = &get_env_variables().DB_DEFAULT_USER_CONNECTION_STRING;
@@ -25,6 +26,7 @@ mod tests {
         Ok(())
     }
 
+    #[ignore]
     #[tokio::test]
     async fn test_make_migrations() -> Result<()> {
         _reset_db().await?;

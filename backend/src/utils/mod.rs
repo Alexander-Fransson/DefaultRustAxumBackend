@@ -21,7 +21,7 @@ pub fn turn_struct_with_serde_serialize_into_hashmap<T:Serialize>(data: T)
         if let Some(value) = str_value {
             return Ok((key.clone(), value.to_string()));
         } else {
-            return Err(Error::FailedToTurnJsonValueIntoStr);
+            return Ok((key.clone(), "NULL".to_string()));
         }
     }).collect();
 
