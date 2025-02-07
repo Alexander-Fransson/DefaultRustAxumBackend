@@ -9,6 +9,7 @@ pub enum Error {
 	DbSettupError(db_setup::Error),
 	QueryFailed(sqlx::Error),
 	Utils(utils::error::Error),
+	EntityNotFound,
 	//Io(std::io::Error)
 }
 

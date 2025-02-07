@@ -7,7 +7,7 @@ use crate::utils::traits_for_proc_macros::GetStructFields;
 // although for axum only this django like structure might suffice
 
 // will this ever be used?
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, FromRow, GetStructFields)]
 pub struct User {
     pub id: i64,
     pub username: String,
@@ -20,7 +20,7 @@ pub struct Username {
     pub username: String
 }
 
-#[derive(Deserialize)]
+#[derive(Serialize)]
 pub struct UserForRegister {
     pub username: String,
     pub email: String,
