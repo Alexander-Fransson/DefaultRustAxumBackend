@@ -57,10 +57,10 @@ T: Serialize {
     let connection = db.get_db_connection();
 
     let data_hash_map = turn_struct_with_serde_serialize_into_hashmap(data)?;
-    let keys = data_hash_map.keys().into_iter().map(|key| key.as_str()).collect::<Vec<_>>();
-    let values = data_hash_map.values().into_iter().map(|value| value.as_str()).collect::<Vec<_>>();
+    let keys = data_hash_map.keys().into_iter().map(|k| k.to_string()).collect::<Vec<_>>();
+    let values = data_hash_map.values().into_iter().map(|v| format!("'{}'", v)).collect::<Vec<_>>();
 
-    let query_string = format!("INSERT INTO {} ({}) VALUES ({}) RETURNING *", C::TABLE_NAME, keys.join(", "), values.join(", "));
+    let query_string = format!("INSERT INTO {} ({}) VALUES ({}) RETURNING id", C::TABLE_NAME, keys.join(", "), values.join(", "));
 
     let (id,) = sqlx::query_as::<_,(i64,)>(&query_string)
     .fetch_one(connection)
