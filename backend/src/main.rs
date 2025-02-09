@@ -9,7 +9,7 @@ mod log;
 mod config_env;
 mod error;
 mod utils;
-mod data_access;
+pub mod data_access;
 mod data_shapes;
 mod gate;
 
