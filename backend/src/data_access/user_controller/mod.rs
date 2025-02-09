@@ -1,8 +1,12 @@
-use crate::data_access::{
-    base::{self, Controller}, DataAccessManager, Error, Result
-};
+pub mod user_controller_test;
 
-use super::model_structs::{User, UserForRegister};
+use crate::data_shapes::user::{User, UserForRegister};
+use crate::data_access::{
+    base_crud::{self, Controller}, 
+    DataAccessManager, 
+    Error, 
+    Result
+};
 
 pub struct UserController;
 
@@ -12,16 +16,16 @@ impl Controller for UserController {
 
 impl UserController {
     pub async fn get(db: &DataAccessManager, id: i64) -> Result<User> {
-        let user = base::get::<UserController, User>(db, id).await?;
+        let user = base_crud::get::<UserController, User>(db, id).await?;
         Ok(user)
     }
 
     pub async fn create(db: &DataAccessManager, user: UserForRegister) -> Result<i64> {
-        let user_id = base::create::<UserController, UserForRegister>(db, user).await?;
+        let user_id = base_crud::create::<UserController, UserForRegister>(db, user).await?;
         Ok(user_id)
     }
 
     pub async fn delete(db: &DataAccessManager, id: i64) -> Result<()> {
-        base::delete::<UserController, User>(db, id).await
+        base_crud::delete::<UserController, User>(db, id).await
     }
 }

@@ -1,7 +1,7 @@
 mod db_setup;
 pub mod error;
-pub mod base;
-pub mod user;
+pub mod base_crud;
+pub mod user_controller;
 
 pub use error::{Error, Result};
 

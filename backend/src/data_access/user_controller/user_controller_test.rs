@@ -1,9 +1,9 @@
 #[cfg(test)]
 mod tests {
     use crate::data_access::_get_data_access_manager_for_tests;
-    use crate::data_access::user::model_structs::UserForRegister;
+    use crate::data_shapes::user::UserForRegister;
     use crate::data_access::Result;
-    use super::super::controller::UserController;
+    use super::super::UserController;
 
     #[tokio::test]
     async fn user_create_get_delete_ok() -> Result<()> {

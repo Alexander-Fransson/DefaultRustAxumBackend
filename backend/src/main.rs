@@ -10,7 +10,8 @@ mod config_env;
 mod error;
 mod utils;
 mod data_access;
-mod authentication;
+mod data_shapes;
+mod gate;
 
 pub use error::{Error, Result};
 
