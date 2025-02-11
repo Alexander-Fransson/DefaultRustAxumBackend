@@ -2,12 +2,16 @@ use axum::extract::{State, Path};
 use axum::Router;
 use axum::Json;
 use crate::data_access::user_controller::UserController;
-use crate::data_access::DataAccessManager;
+use crate::data_access:: DataAccessManager;
 use crate::data_shapes::user::{User, UserForRegister};
-use super::{Result, Error};
+use super::Result;
+use axum::routing::{get, post};
 
-pub async fn user_routes() -> Router {
+pub fn user_routes(da: DataAccessManager) -> Router {
     Router::new()
+    .route("/:id", get(get_user_handler).delete(delete_user_handler))
+    .route("/", post(create_user_handler))
+    .with_state(da)
 }
 
 pub async fn get_user_handler(
@@ -16,7 +20,6 @@ pub async fn get_user_handler(
 ) -> Result<Json<User>> {
 
     let user = UserController::get(&da, id).await?;
-
 
     Ok(Json(user))
 }

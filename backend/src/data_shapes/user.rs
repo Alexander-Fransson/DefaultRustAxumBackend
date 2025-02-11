@@ -20,7 +20,7 @@ pub struct Username {
     pub username: String
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize)]
 pub struct UserForRegister {
     pub username: String,
     pub email: String,
@@ -28,8 +28,8 @@ pub struct UserForRegister {
 }
 
 // might be kind to let the user use either the email or the username
-#[derive(Deserialize)]
-pub struct UserForLogin {
-    pub email: String,
-    pub password: String
-}
+// #[derive(Deserialize)]
+// pub struct UserForLogin {
+//     pub email: String,
+//     pub password: String
+// }

@@ -4,7 +4,6 @@ use crate::data_shapes::user::{User, UserForRegister};
 use crate::data_access::{
     base_crud::{self, Controller}, 
     DataAccessManager, 
-    Error, 
     Result
 };
 
@@ -26,7 +25,7 @@ impl UserController {
     }
 
     pub async fn delete(db: &DataAccessManager, id: i64) -> Result<()> {
-        base_crud::delete::<Self, User>(db, id).await;
+        base_crud::delete::<Self, User>(db, id).await?;
         Ok(())
     }
 }
