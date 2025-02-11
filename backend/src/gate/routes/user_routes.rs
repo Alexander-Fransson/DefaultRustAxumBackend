@@ -9,8 +9,8 @@ use axum::routing::{get, post};
 
 pub fn user_routes(da: DataAccessManager) -> Router {
     Router::new()
-    .route("/:id", get(get_user_handler).delete(delete_user_handler))
-    .route("/", post(create_user_handler))
+    .route("/user/", post(create_user_handler))
+    .route("/user/{id}", get(get_user_handler).delete(delete_user_handler)) // in axum 0.7 you should use {id} instead of :id
     .with_state(da)
 }
 

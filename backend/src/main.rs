@@ -25,7 +25,7 @@ async fn main() -> Result<()> {
     let user_routes = user_routes(data_access_manager); // now it just has to be tested and documented, remember that the impl response had to be done in the gate error
 
     let main_router = Router::new()
-    .nest("/users", user_routes)
+    .nest("/api/v1", user_routes)
     .route("/hello_word", get(|| async {"Hello, World!"}));
 
     let listener = TcpListener::bind("127.0.0.1:3000").await?;

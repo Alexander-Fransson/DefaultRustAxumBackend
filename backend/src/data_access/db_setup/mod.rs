@@ -10,13 +10,12 @@ use std::fs;
 
 pub use error::{Error, Result};
 
-// TODO: include these errors in the main error module
 pub async fn _reset_db() -> Result<()> {
     let connect_as_default_user = &get_env_variables().DB_DEFAULT_USER_CONNECTION_STRING;
     let pool = create_connection_pool(connect_as_default_user).await?;
 
-    let file_data  = fs::read_to_string("./db/sql/reset_db/00_recreate_db.sql")
-    .map_err(|e| Error::FailedToReadFiles(format!("{}", e)))?;
+    let file_data  = fs::read_to_string("./db/sql/reset_db/00_recreate_db.sql")   
+    .map_err(|e| Error::FailedToReadFiles(format!("{} \n\nA common fault is to not run this command from the root directory /backend", e)))?;
     
     let recreation_commands: Vec<&str> = file_data.split(";").collect();
 
