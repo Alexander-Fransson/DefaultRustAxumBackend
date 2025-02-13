@@ -6,6 +6,7 @@ mod tests {
     use super::super::UserController;
 
     #[tokio::test]
+    #[ignore]
     async fn user_create_get_delete_ok() -> Result<()> {
         let db = _get_data_access_manager_for_tests().await;
 

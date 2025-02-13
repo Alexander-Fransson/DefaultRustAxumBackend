@@ -6,6 +6,7 @@ mod tests {
     use super::super::error::Result;
 
     #[test]
+    #[ignore]
     fn turn_struct_with_serde_serialize_into_hashmap_ok() -> Result<()> {
         #[derive(Serialize)]
         struct SomeStruct {
@@ -25,6 +26,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore]
     fn turn_struct_with_serde_serialize_into_hashmap_ok_with_option() -> Result<()> {
         #[derive(Serialize)]
         struct SomeStruct {

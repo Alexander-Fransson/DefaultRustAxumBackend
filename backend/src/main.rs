@@ -1,3 +1,4 @@
+use config_env::get_env_variables;
 use gate::routes::user_routes;
 use log::tracer_config::enable_tracing;
 use tracing::info;
@@ -13,6 +14,7 @@ mod utils;
 pub mod data_access;
 mod data_shapes;
 mod gate;
+mod integration_tests;
 
 pub use error::{Error, Result};
 
@@ -20,7 +22,13 @@ pub use error::{Error, Result};
 async fn main() -> Result<()> {
 
     enable_tracing();
-        
+    serve_server().await?;
+    
+    Ok(())
+}
+
+async fn serve_server() -> Result<()> {
+            
     let data_access_manager = DataAccessManager::new().await?;
     let user_routes = user_routes(data_access_manager); // now it just has to be tested and documented, remember that the impl response had to be done in the gate error
 
@@ -28,9 +36,11 @@ async fn main() -> Result<()> {
     .nest("/api/v1", user_routes)
     .route("/hello_word", get(|| async {"Hello, World!"}));
 
-    let listener = TcpListener::bind("127.0.0.1:3000").await?;
+    let url = get_env_variables().LISTENER_URL;
 
-    info!("Listening on http://127.0.0.1:3000");
+    let listener = TcpListener::bind(url).await?;
+
+    info!("listening on: http://{}", url);
 
     axum::serve(listener, main_router).await?;
     

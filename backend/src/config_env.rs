@@ -16,7 +16,8 @@ pub fn get_env_variables() -> &'static EnvVariableContainer {
 pub struct EnvVariableContainer {
     //pub WEB_FOLDER: String,
     pub DB_CONNECTION_STRING: String,
-    pub DB_DEFAULT_USER_CONNECTION_STRING: String
+    pub DB_DEFAULT_USER_CONNECTION_STRING: String,
+    pub LISTENER_URL: &'static str
 }
 impl EnvVariableContainer {
     pub fn load_vars_from_env() -> Result<EnvVariableContainer> {
@@ -24,6 +25,7 @@ impl EnvVariableContainer {
             //WEB_FOLDER: get_var_from_env_parsed("WEB_FOLDER")?,
             DB_CONNECTION_STRING: get_var_from_env_parsed("DB_CONNECTION_STRING")?,
             DB_DEFAULT_USER_CONNECTION_STRING: get_var_from_env_parsed("DB_DEFAULT_USER_CONNECTION_STRING")?,
+            LISTENER_URL: "127.0.0.1:3000"
         })
     }
 }
