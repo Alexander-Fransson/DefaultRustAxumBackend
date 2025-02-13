@@ -47,7 +47,7 @@ pub mod test {
 
         let client = reqwest::Client::new();
 
-        let request_url = format!("http://{}/api/v1/user", get_env_variables().LISTENER_URL);
+        let request_url = format!("http://{}/api/v1/user/", get_env_variables().LISTENER_URL);
 
         let user = UserForRegister {
             username: "test_username".to_string(),
@@ -60,20 +60,16 @@ pub mod test {
         .send().await
         .unwrap();
 
-        println!("response: {:#?}", &response.text().await.unwrap());
+        assert_eq!(response.status(), reqwest::StatusCode::OK);
 
-        assert!(false);
+        let user_id = response.json::<User>().await.unwrap().id;
 
-        // assert_eq!(response.status(), reqwest::StatusCode::OK);
+        let response = client.get(format!("{}{}", &request_url, user_id)).send().await.unwrap();
+        assert_eq!(response.status(), reqwest::StatusCode::OK);
 
-        // let user_id = response.json::<User>().await.unwrap().id;
+        client.delete(format!("{}{}", &request_url, user_id)).send().await.unwrap();
 
-        // let response = client.get(format!("{}/{}", &request_url, user_id)).send().await.unwrap();
-        // assert_eq!(response.status(), reqwest::StatusCode::OK);
-
-        // client.delete(format!("{}/{}", &request_url, user_id)).send().await.unwrap();
-
-        // server.abort();
+        server.abort();
 
         Ok(())
     }

@@ -1,6 +1,7 @@
 use axum::extract::{State, Path};
 use axum::Router;
 use axum::Json;
+use tracing::info;
 use crate::data_access::user_controller::UserController;
 use crate::data_access:: DataAccessManager;
 use crate::data_shapes::user::{User, UserForRegister};
@@ -32,6 +33,8 @@ pub async fn create_user_handler(
     let user_password = user.password.clone();
     let user_email = user.email.clone();
     let user_username = user.username.clone();
+
+    info!("user: {:#?}", user);
 
     let user_id = UserController::create(&da, user).await?;
 
