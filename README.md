@@ -88,12 +88,20 @@ let main_router = Router::new().route("/hello_word", get(|| async {"Hello, World
 ```
 I also added the listener and axum server as well as the std::io::Error and from required for the question mark operators to work
 
-### 6. Create the list users route.
+### 6. Create the Create Get & Delete routes for user.
 maybe a rest api pattern...
 Jermy chone seams to have a clever architecture primarially split in a "web" layer and a "model" layer
 The "model" layer handles normalization, database communitation and security aka data access
 The "web" layer handles authentication and authorization.
 Theese names are somewhat standard however I find them to be too abstract, therefore I will call the model folder data_access
-Likewise I will call the web layer authentication
-I moved the db_setup folder to the data access layer and created a dataaccess manager with an implemented new function that makes the migrations, resets the db and returns a connection pool that can only be used in the data access module.
-I created a user and a base module in the data access layer and began filling the user model with structs i belived was useful.
+Likewise I will call the web layer gate as it contains the routes and middlewares
+I moved the db_setup folder to the data access layer and created a dataaccess manager with an implemented new function that makes the migrations, resets the db and returns a connection pool that can only be used in the data access module. This is done in in backend/src/data_access/mod.rs.
+I also created a function that creates data access managers to use when testing the future controllers
+I wanted to create a strong reusable foundation for the crud functions so I created a base controller trait in backend/src/data_access/base_crud.rs
+The base controller contains a const for the table name of the data base table that is to be interacted with. If the db name coresponded to struct names it could have been accesssed with a proc macro but this aproach gives more naming freedome.
+Than I started to create generic functions gor the get list create and delete functions. Theese take generic parameters arguments, the base controller and the response struct. The response struct should implement From row so that sqlx can map the intended response as well as Unpin and Send for the get requests that return a struct.
+
+To get the struct fields of the generic structs I created a proc-macro lib in the utils folder. This is done through cargo new name_of_create --lib. Than I configured the Cargo.toml file in backend/src/utils/proc-macros/Cargo.toml. Under lib I set proc macros to true and I added quote and syn as dev dependencies. syn turns binary streams into token trees and quote does the oposite. 
+Than in backend/src/utils/proc-macros/src/lib.rs I created a derive type proc macro for the GetStructFields trait that does percisely that. Proc macros are basically macros that turn stuff into rust at compile time. The derive type lets you create custom Derives that implements stuff into structs with one word. They do however have to be linked to a trait in the main crate so I added the get struct field to a traits for proc macros folder under utils backend/src/utils/traits_for_proc_macros.rs 
+You also have to specify the proc macro lib as a dependency by providing the create name and path in backend/Cargo.toml. This allows us to query the DB for struct specific fields simply by deriving the Get struct fields trait as shown in the get and list functions in base_crud.
+

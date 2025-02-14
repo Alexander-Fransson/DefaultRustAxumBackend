@@ -1,8 +1,10 @@
 #[cfg(test)]
 pub mod test {
 
+    use serial_test::serial;
+
     use crate::config_env::get_env_variables;
-    use crate::log::tracer_config::enable_tracing;
+    //use crate::log::tracer_config::enable_tracing;
     use crate::serve_server;
     use crate::error::Result;
     use crate::data_shapes::user::{UserForRegister, User};
@@ -11,15 +13,15 @@ pub mod test {
 
     fn run_server_sub_process() -> tokio::task::JoinHandle<()> {
         tokio::spawn(async move {
-            enable_tracing();
+            //enable_tracing();
             if let Err(e) = serve_server().await {
                 println!("error: {}", e);
             }
         })
     }
 
+    #[serial]
     #[tokio::test]
-    #[ignore]
     async fn router_hello_word_ok() -> Result<()> {
         
         let server = run_server_sub_process();
@@ -38,6 +40,7 @@ pub mod test {
         Ok(())
     }
 
+    #[serial]
     #[tokio::test]
     async fn  router_create_read_delete_ok() -> Result<()> {
 

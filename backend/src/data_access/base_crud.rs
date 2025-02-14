@@ -1,8 +1,7 @@
 use super::error::{Error, Result};
 use serde::Serialize;
-use sqlx::{postgres::PgRow, query, FromRow};
+use sqlx::{postgres::PgRow, FromRow};
 use crate::utils::traits_for_proc_macros::GetStructFields;
-use proc_macros::GetStructFields;
 use crate::utils::turn_struct_with_serde_serialize_into_hashmap;
 
 use super::DataAccessManager;
@@ -31,7 +30,7 @@ Unpin + Send + GetStructFields // to make it work well with async functions
     Ok(row)
 }
 
-pub async fn get_all<C, T>(db: &DataAccessManager) -> Result<Vec<T>>
+pub async fn list<C, T>(db: &DataAccessManager) -> Result<Vec<T>>
 where 
 C: Controller, 
 T: for<'r> FromRow<'r, PgRow> +
