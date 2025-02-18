@@ -10,7 +10,6 @@ pub enum Error {
 	QueryFailed(sqlx::Error),
 	Utils(utils::error::Error),
 	EntityNotFound,
-	//Io(std::io::Error)
 }
 
 impl From<db_setup::Error> for Error {
@@ -30,12 +29,6 @@ impl From<utils::error::Error> for Error {
 		Self::Utils(err)
 	}
 }
-
-// impl From<std::io::Error> for Error {
-// 	fn from(err: std::io::Error) -> Self {
-// 		Self::Io(err)
-// 	}
-// }
 
 impl core::fmt::Display for Error {
 	fn fmt(

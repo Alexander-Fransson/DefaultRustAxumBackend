@@ -15,7 +15,7 @@ pub fn user_routes(da: DataAccessManager) -> Router {
     .with_state(da)
 }
 
-pub async fn get_user_handler(
+async fn get_user_handler(
     State(da): State<DataAccessManager>, 
     Path(id): Path<i64>
 ) -> Result<Json<User>> {
@@ -25,7 +25,7 @@ pub async fn get_user_handler(
     Ok(Json(user))
 }
 
-pub async fn create_user_handler(
+async fn create_user_handler(
     State(da): State<DataAccessManager>, 
     Json(user): Json<UserForRegister>
 ) -> Result<Json<User>> {
@@ -48,7 +48,7 @@ pub async fn create_user_handler(
     Ok(Json(user))
 }
 
-pub async fn delete_user_handler(
+async fn delete_user_handler(
     State(da): State<DataAccessManager>, 
     Path(id): Path<i64>
 ) -> Result<Json<&'static str>> {

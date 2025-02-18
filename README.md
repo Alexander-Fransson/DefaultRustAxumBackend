@@ -93,15 +93,31 @@ maybe a rest api pattern...
 Jermy chone seams to have a clever architecture primarially split in a "web" layer and a "model" layer
 The "model" layer handles normalization, database communitation and security aka data access
 The "web" layer handles authentication and authorization.
-Theese names are somewhat standard however I find them to be too abstract, therefore I will call the model folder data_access
+Theese names seam somewhat standard however I find them to be too abstract, therefore I will call the model folder data_access
 Likewise I will call the web layer gate as it contains the routes and middlewares
 I moved the db_setup folder to the data access layer and created a dataaccess manager with an implemented new function that makes the migrations, resets the db and returns a connection pool that can only be used in the data access module. This is done in in backend/src/data_access/mod.rs.
 I also created a function that creates data access managers to use when testing the future controllers
 I wanted to create a strong reusable foundation for the crud functions so I created a base controller trait in backend/src/data_access/base_crud.rs
 The base controller contains a const for the table name of the data base table that is to be interacted with. If the db name coresponded to struct names it could have been accesssed with a proc macro but this aproach gives more naming freedome.
-Than I started to create generic functions gor the get list create and delete functions. Theese take generic parameters arguments, the base controller and the response struct. The response struct should implement From row so that sqlx can map the intended response as well as Unpin and Send for the get requests that return a struct.
+Than I started to create generic functions for the get list create and delete functions. Theese take generic parameters arguments, the base controller and the response struct. The response struct should implement From row so that sqlx can map the intended response as well as Unpin and Send for the get requests that return a struct.
 
 To get the struct fields of the generic structs I created a proc-macro lib in the utils folder. This is done through cargo new name_of_create --lib. Than I configured the Cargo.toml file in backend/src/utils/proc-macros/Cargo.toml. Under lib I set proc macros to true and I added quote and syn as dev dependencies. syn turns binary streams into token trees and quote does the oposite. 
 Than in backend/src/utils/proc-macros/src/lib.rs I created a derive type proc macro for the GetStructFields trait that does percisely that. Proc macros are basically macros that turn stuff into rust at compile time. The derive type lets you create custom Derives that implements stuff into structs with one word. They do however have to be linked to a trait in the main crate so I added the get struct field to a traits for proc macros folder under utils backend/src/utils/traits_for_proc_macros.rs 
 You also have to specify the proc macro lib as a dependency by providing the create name and path in backend/Cargo.toml. This allows us to query the DB for struct specific fields simply by deriving the Get struct fields trait as shown in the get and list functions in base_crud.
+
+The get struct field is used in the get methods to create a string of what to select from the table. This then uses an sqlx query to interact with the database as detailed in backend/src/data_access/base_crud.rs. To get the struct fields and values for the detault create function I created a utils function that turns structs with serde serialize into hashmaps. Hashmaps have implemented functions to get the keys and values as iters. The function also accounts for None values and retunrs a NULL string in those ocurrences. This function is used in the default functions that have the struct as an imput to turn that struct into a string that can be used with sqlx. 
+
+The utils module has an error module which is implemented by the data access module.
+
+The base functions are used in the user controller at backend/src/data_access/user_controller/mod.rs which now just have to pass the data access manager and the request information implementing the nececary traits. As a controller it aslo has a table name which it passes as a generic parameter to the functions. The other generic parameter is fufilled by the controller function parameter which specializes the generic function to make the required standard querry. If we would want to create a less standard querry we would do so as sqlx in a specific controller such as this user controller.
+
+Afterwords we move on to the gate layer. Here I created modules for routes and middlewares and since we dont need any middlewares at this stage I just create a user routes module at backend/src/gate/routes/user_routes.rs. Here the main public function is the user routes function which takes the data access manager and returns an axum router. The router has routes wich take search urls and handler functions in wrappers which indicate the request type. The router also includes the data access manager using the with_state functions. This enables the handler functions to access the data access manager wrapped in a State type which is simpley unwrapped. The function can also access the application json through parameters wrapped in Json as well as variables in the url through parameters wrapped in Path. axum knows which parameters the functions shoud require through the inclusion of a with state and a path parameters marked within paranthesis {path_parameter} in the url. The order of the parameters is State, Path, and lastly Json if all three are included. The handler functions take theese areguments and pass them to the intended Controller and then takes the result of the controller and returns a result that can be used by users f.ex in the form of Html or Json. The characteristic of these types that axum deems can be used by users is that they implement the into response trait. To use the error handling the result error also have to implement into response which is done in /backend/src/gate/routes/error.rs
+
+Lastly in main I create a data access manager through its ::new fuction and pass it to the user routes which I save as a variable.  Then this is nesteed in the main rputer which in turned served by axum.
+
+To summerize:
+
+main <- gate[router <- handler] <- data_access[controller <- base_functions{utils}] <-DB
+|_data_access_manager--------------------------------------------------_|
+
 
