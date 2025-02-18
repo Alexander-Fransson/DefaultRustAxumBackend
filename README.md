@@ -120,4 +120,6 @@ To summerize:
 main <- gate[router <- handler] <- data_access[controller <- base_functions{utils}] <-DB
 |_data_access_manager--------------------------------------------------_|
 
+### 7. Create request context
 
+I created a request context struct in backend/src/request_context/mod.rs which may hold the logged in users id. I also reserved user id 0 for testing and an error if someone would try to use that.

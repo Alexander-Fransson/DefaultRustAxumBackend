@@ -15,6 +15,7 @@ pub mod data_access;
 mod data_shapes;
 mod gate;
 mod integration_tests;
+mod request_context;
 
 pub use error::{Error, Result};
 
