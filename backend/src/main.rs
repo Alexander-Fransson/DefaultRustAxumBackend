@@ -12,7 +12,7 @@ mod config_env;
 mod error;
 mod utils;
 pub mod data_access;
-mod data_shapes;
+mod views;
 mod gate;
 mod integration_tests;
 mod request_context;

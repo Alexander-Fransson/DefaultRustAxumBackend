@@ -111,6 +111,8 @@ The utils module has an error module which is implemented by the data access mod
 
 The base functions are used in the user controller at backend/src/data_access/user_controller/mod.rs which now just have to pass the data access manager and the request information implementing the nececary traits. As a controller it aslo has a table name which it passes as a generic parameter to the functions. The other generic parameter is fufilled by the controller function parameter which specializes the generic function to make the required standard querry. If we would want to create a less standard querry we would do so as sqlx in a specific controller such as this user controller.
 
+I also moved all the structs that shape the requests to the views folder so that they can be reused by the frontend. Important to know is to derive from row on the structs that sqlx turns its results into as in backend/src/views/user.rs becouse sqlx by default returns a useless row type. 
+
 Afterwords we move on to the gate layer. Here I created modules for routes and middlewares and since we dont need any middlewares at this stage I just create a user routes module at backend/src/gate/routes/user_routes.rs. Here the main public function is the user routes function which takes the data access manager and returns an axum router. The router has routes wich take search urls and handler functions in wrappers which indicate the request type. The router also includes the data access manager using the with_state functions. This enables the handler functions to access the data access manager wrapped in a State type which is simpley unwrapped. The function can also access the application json through parameters wrapped in Json as well as variables in the url through parameters wrapped in Path. axum knows which parameters the functions shoud require through the inclusion of a with state and a path parameters marked within paranthesis {path_parameter} in the url. The order of the parameters is State, Path, and lastly Json if all three are included. The handler functions take theese areguments and pass them to the intended Controller and then takes the result of the controller and returns a result that can be used by users f.ex in the form of Html or Json. The characteristic of these types that axum deems can be used by users is that they implement the into response trait. To use the error handling the result error also have to implement into response which is done in /backend/src/gate/routes/error.rs
 
 Lastly in main I create a data access manager through its ::new fuction and pass it to the user routes which I save as a variable.  Then this is nesteed in the main rputer which in turned served by axum. I also moved the server serving 
@@ -120,6 +122,6 @@ To summerize:
 main <- gate[router <- handler] <- data_access[controller <- base_functions{utils}] <-DB
 |_data_access_manager--------------------------------------------------_|
 
-### 7. Create request context
+### 7. Create context
 
 I created a request context struct in backend/src/request_context/mod.rs which may hold the logged in users id. I also reserved user id 0 for testing and an error if someone would try to use that.

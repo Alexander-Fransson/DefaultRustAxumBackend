@@ -3,7 +3,7 @@ mod tests {
     use serial_test::serial;
 
     use crate::data_access::_get_data_access_manager_for_tests;
-    use crate::data_shapes::user::UserForRegister;
+    use crate::views::user::UserForRegister;
     use crate::data_access::Result;
     use super::super::UserController;
 

@@ -4,7 +4,7 @@ use axum::Json;
 use tracing::info;
 use crate::data_access::user_controller::UserController;
 use crate::data_access:: DataAccessManager;
-use crate::data_shapes::user::{User, UserForRegister};
+use crate::views::user::{User, UserForRegister};
 use super::Result;
 use axum::routing::{get, post};
 

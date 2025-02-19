@@ -7,7 +7,7 @@ pub mod test {
     //use crate::log::tracer_config::enable_tracing;
     use crate::serve_server;
     use crate::error::Result;
-    use crate::data_shapes::user::{UserForRegister, User};
+    use crate::views::user::{UserForRegister, User};
 
     //make tests sequential
 

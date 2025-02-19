@@ -1,6 +1,6 @@
 pub mod user_controller_test;
 
-use crate::data_shapes::user::{User, UserForRegister};
+use crate::views::user::{User, UserForRegister};
 use crate::data_access::{
     base_crud::{self, Controller}, 
     DataAccessManager, 
