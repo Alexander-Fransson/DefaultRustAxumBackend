@@ -1,15 +1,12 @@
 use axum::extract::FromRequestParts;
 use axum::http::request::Parts;
-use async_trait::async_trait;
 
 use crate::request_context::RequestContext;
-
 use super::{Error, Result};
 
-
-
-#[async_trait]
-impl <S: Send + Sync> FromRequestParts<S> for RequestContext {
+// async trait leads to an error here, and it compiles without it so maybe it is not needed
+impl <S> FromRequestParts<S> for RequestContext where S: Send + Sync {
+    // this does not extract from the body
     type Rejection = Error;
 
     async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self> {
@@ -21,4 +18,3 @@ impl <S: Send + Sync> FromRequestParts<S> for RequestContext {
     }
 }
 
-// need to rethink error handling on this floor maybe have one master and many lesser
