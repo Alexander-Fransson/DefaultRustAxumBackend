@@ -17,14 +17,8 @@ mod tests {
             email: "email@example.com3333".to_string(),
             password: "test_password24".to_string(),
         };
-
-        // sqlx::query("INSERT INTO \"user\" (email, username,  \"password\") VALUES ('email@example.com333333', 'test_user', 'test_password')")
-        // .execute(db.get_db_connection())
-        // .await?;
         
         let create_req_id = UserController::create(&db, new_user).await?;
-
-        println!("create_req_id: {}", create_req_id);
 
         let user = UserController::get(&db, create_req_id).await?;
 

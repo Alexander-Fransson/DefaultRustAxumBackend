@@ -2,10 +2,14 @@ use config_env::get_env_variables;
 use gate::routes::user_routes;
 use log::tracer_config::enable_tracing;
 use tracing::info;
-use axum::Router;
+use axum::{middleware, Router};
 use axum::routing::get;
 use tokio::net::TcpListener;
 use crate::data_access::DataAccessManager;
+use gate::middlewares::{
+    mw_extract_request_context,
+    mw_require_request_context
+};
 
 mod log;
 mod config_env;
@@ -35,7 +39,8 @@ async fn serve_server() -> Result<()> {
 
     let main_router = Router::new()
     .nest("/api/v1", user_routes)
-    .route("/hello_word", get(|| async {"Hello, World!"}));
+    .route("/hello_word", get(|| async {"Hello, World!"}))
+    .layer(middleware::from_fn(mw_extract_request_context));
 
     let url = get_env_variables().LISTENER_URL;
 

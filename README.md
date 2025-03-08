@@ -130,3 +130,4 @@ I created a request context struct in backend/src/request_context/mod.rs which m
 
 Totally out of context but I think it would be asume if you could have a macro that took the dominant view struct and changed the sql files if they have fields that the struct did not have and reverse. It would also be cool if you could have a linter that made sure the related struct like UserForCreate for User did not have fields the dominant struct did not have. Dont think Ill develop that in a while though.
 
+Added tower to test middlewares in backend/src/gate/middlewares/middlewares_test.rs
