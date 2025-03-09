@@ -9,7 +9,7 @@ pub struct RequestContext {
 
 impl RequestContext {
 
-    pub fn _new_for_testing() -> Self {
+    pub fn root() -> Self {
         Self {user_id: 0}
     }
 

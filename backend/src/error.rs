@@ -1,4 +1,4 @@
-use std::{fmt::Debug, future::IntoFuture};
+use std::fmt::Debug;
 use crate::data_access;
 
 pub type Result<T> = core::result::Result<T, Error>;

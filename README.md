@@ -4,6 +4,8 @@ A default axum API that I can later fork from when I want to do something more s
 
 ## Dev Diary
 
+// maybe it would have been best to make the authentication middleware before the crud
+
 ### 1. Create dev database
 
 // after step is done read through and make instructions simpler

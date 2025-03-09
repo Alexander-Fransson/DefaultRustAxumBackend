@@ -2,25 +2,162 @@
 
 #[cfg(test)]
 mod tests {
-   use axum::{extract::Request, http::request::Parts};
    use reqwest::RequestBuilder;
+   use axum::{
+      body::Body,
+      extract::FromRequestParts,
+      http::{Request, StatusCode, request::Parts},
+      middleware::{self, Next},
+      response::{IntoResponse, Response},
+      routing::get,
+      Extension,
+      Router
+   };
+   use tower::ServiceBuilder;
+   use tower::ServiceExt;
+
+   use crate::request_context::RequestContext;
+   use super::super::{mw_implant_request_context, mw_require_request_context};
 
 
    #[tokio::test]
-   async fn middleware_experiment() {
+   async fn implement_request_context_middlewares_ok() {
 
-      use axum::{
-         body::Body,
-         extract::FromRequestParts,
-         http::{Request, StatusCode},
-         middleware::{self, Next},
-         response::IntoResponse,
-         routing::get,
-         Extension,
-         Router
-      };
-      use tower::ServiceBuilder;
-      use tower::ServiceExt;
+      //***********************************************
+      // experiment for the request context middlewares
+      //***********************************************
+     
+      // #[derive(Clone, Debug)]
+      // struct RequestContextPararell {
+      //    user_id: i64
+      // }
+
+      // // error
+
+      // type RCResult<T> = core::result::Result<T, RCError>;
+
+      // #[derive(Debug)]
+      // enum RCError{
+      //    RequestContextNotInExtensions
+      // }
+
+      // impl IntoResponse for RCError {
+      //    fn into_response(self) -> Response {
+      //       // magic is to happen in map response middleware ServerError -> ClientError 
+      
+      //       let mut response = StatusCode::NOT_FOUND.into_response();
+      //       response.extensions_mut().insert(self.to_string());
+      
+      //       response
+      //    }
+      // }
+
+      // impl core::fmt::Display for RCError {
+      //    fn fmt(
+      //       &self,
+      //       fmt: &mut core::fmt::Formatter,
+      //    ) -> core::result::Result<(), core::fmt::Error> {
+      //       write!(fmt, "{self:?}")
+      //    }
+      // }
+      
+      // impl std::error::Error for RCError {}
+
+
+      // // from request parts
+     
+      // impl<S> FromRequestParts<S> for RequestContextPararell
+      // where S: Send + Sync 
+      // {
+      //    type Rejection = RCError;
+
+      //    async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
+      //       let request_context_from_req = parts
+      //       .extensions
+      //       .get::<RequestContextPararell>()
+      //       .ok_or(RCError::RequestContextNotInExtensions)?
+      //       .clone();
+
+      //       Ok(request_context_from_req)
+      //    }
+      // }
+
+      // // middlewares modifying the request
+
+      // async fn mw_insert_request_context(mut req: Request<Body>, next: Next) -> impl IntoResponse {
+      //    let request_context = RequestContextPararell { user_id: 1 };
+
+
+      //    println!("mw_insert_request_context");
+
+      //    req.extensions_mut().insert(request_context);
+
+      //    next.run(req).await
+      // }
+
+      async fn remove_request_context(mut req: Request<Body>, next: Next) -> impl IntoResponse {
+
+         println!("remove_request_context");
+
+         req.extensions_mut().remove::<RequestContext>();
+
+         next.run(req).await
+      }
+
+      // async fn mw_require_request_context(
+      //    request_context: RCResult<RequestContextPararell>,
+      //    req: Request<Body>,
+      //    next: Next
+      // ) -> RCResult<Response> {
+         
+      //    println!("mw_require_request_context");
+
+      //    request_context?;
+
+      //    Ok(next.run(req).await)
+      // }
+
+      // handler  
+
+      async fn return_request_context(request_context: RequestContext) -> impl IntoResponse {
+         println!("\nREQUEST CONTEXT: {}\n", request_context.user_id);
+         request_context.user_id.to_string()
+      }
+
+      // routes
+
+      let self_defeating_route = Router::new()
+      .route("/request_context", get(return_request_context))
+      .route_layer(middleware::from_fn(mw_require_request_context))
+      .route_layer(middleware::from_fn(remove_request_context));
+
+      let request_context_app = Router::new()
+      .route("/request_context", get(return_request_context))
+      .nest("/self_defeating", self_defeating_route)
+      .layer(middleware::from_fn(mw_implant_request_context));
+
+      let request_context_response = request_context_app.clone().oneshot(
+         Request::builder()
+         .uri("/request_context")
+         .body(Body::empty())
+         .unwrap()
+      ).await.unwrap();
+
+      let failed_response = request_context_app.oneshot(
+         Request::builder()
+         .uri("/self_defeating/request_context")
+         .body(Body::empty())
+         .unwrap()
+      ).await.unwrap();
+
+      assert_eq!(request_context_response.status(), StatusCode::OK);
+      assert_eq!(failed_response.status(), StatusCode::NOT_FOUND);
+
+
+   }
+
+   #[tokio::test]
+   async fn middleware_experiment() {      
 
       #[derive(Clone, Debug)]
       struct MessageHolder(String);
