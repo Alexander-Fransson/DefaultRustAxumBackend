@@ -15,9 +15,9 @@ mod tests {
    };
    use tower::ServiceBuilder;
    use tower::ServiceExt;
-use tower_cookies::CookieManagerLayer;
+use tower_cookies::{Cookie, CookieManagerLayer};
 
-   use crate::request_context::RequestContext;
+   use crate::{gate::AUTH_COOKIE_NAME, request_context::RequestContext};
    use super::super::{mw_implant_request_context, mw_require_request_context};
 
 
@@ -138,23 +138,37 @@ use tower_cookies::CookieManagerLayer;
       .layer(middleware::from_fn(mw_implant_request_context))
       .layer(CookieManagerLayer::new());
 
+      let auth_token = format!("{}=1", AUTH_COOKIE_NAME); //Cookie::new(AUTH_COOKIE_NAME, "1");
 
       let request_context_response = request_context_app.clone().oneshot(
          Request::builder()
+         .uri("/request_context")
+         .header("Cookie", &auth_token) // the header the tower cooke middleware looks fore is Cookie
+         .body(Body::empty())
+         .unwrap()
+      ).await.unwrap();
+
+      let failed_response = request_context_app.clone().oneshot(
+         Request::builder()
+         .uri("/self_defeating/request_context")
+         .header("Cookie", auth_token)
+         .body(Body::empty())
+         .unwrap()
+      ).await.unwrap();
+
+      let response_without_cookie = request_context_app.oneshot(   
+         Request::builder()         
          .uri("/request_context")
          .body(Body::empty())
          .unwrap()
       ).await.unwrap();
 
-      let failed_response = request_context_app.oneshot(
-         Request::builder()
-         .uri("/self_defeating/request_context")
-         .body(Body::empty())
-         .unwrap()
-      ).await.unwrap();
+      // I have now incorporated cookies into the middleare however I dont want to fail the request if no cookie is found
+      // I guess that stuff can be done when I add some user authentication logic
 
       assert_eq!(request_context_response.status(), StatusCode::OK);
       assert_eq!(failed_response.status(), StatusCode::NOT_FOUND);
+      assert_eq!(response_without_cookie.status(), StatusCode::BAD_REQUEST);
 
 
    }

@@ -40,6 +40,8 @@ impl IntoResponse for Error {
 
 		let mut response = match &self {
 			Error::ExtractorError(_error) => StatusCode::NOT_FOUND.into_response(),
+			Error::NoAuthCookieFound => StatusCode::BAD_REQUEST.into_response(),
+			Error::ParseError => StatusCode::UNAUTHORIZED.into_response(),
 			_ => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
 		};
 
