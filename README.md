@@ -144,3 +144,7 @@ What I have done is a a mw that inserts a root request_context struct into the r
 ### 9 Use cookies in middlewares
 
 This needs the crate tower-cookies for the cookies middleware that allows cookies extraction. To use the cookies extractor you need to add a Cookie manager layer at the end of the routes as done in main and the middleware tests. Then specific cokkies can be accessed from the middleware using the .get, .name and .value can be used to access the different stuff. I also updated the middlewares error to handdle the cookie value extraction in backend/src/gate/middlewares/mw_implant_request_context.rs. A useful function to use an error in a map is the transponse function which turns an Option(Result) into a Result(Option). Lastly it is worth to mention that the cookie accessed by the cookie manager layer is a header with the key of "Cookie" and a value of "x=x". 
+
+### 10 JWT authetication
+
+Apperently it is proper to have a unique hash fore each user stored in the database to pervent attacks using hash dicitionaries, ensure users can have the same password, protect against leaks and other security reasons so a password and a salt is added to the user creation files

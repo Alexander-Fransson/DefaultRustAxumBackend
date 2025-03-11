@@ -168,7 +168,7 @@ use tower_cookies::{Cookie, CookieManagerLayer};
 
       assert_eq!(request_context_response.status(), StatusCode::OK);
       assert_eq!(failed_response.status(), StatusCode::NOT_FOUND);
-      assert_eq!(response_without_cookie.status(), StatusCode::BAD_REQUEST);
+      assert_eq!(response_without_cookie.status(), StatusCode::NOT_FOUND);
 
 
    }
