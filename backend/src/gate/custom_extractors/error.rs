@@ -7,7 +7,7 @@ pub type ExtractorResult<T> = core::result::Result<T, Error>;
 
 #[derive(Debug, Clone)]
 pub enum Error {
-    RequestContextNotInExtensions
+    RequestContextNotInRequestExtensions
 }
 
 impl IntoResponse for Error {

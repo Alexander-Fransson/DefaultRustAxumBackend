@@ -147,4 +147,34 @@ This needs the crate tower-cookies for the cookies middleware that allows cookie
 
 ### 10 JWT authetication
 
-Apperently it is proper to have a unique hash fore each user stored in the database to pervent attacks using hash dicitionaries, ensure users can have the same password, protect against leaks and other security reasons so a password and a salt is added to the user creation files
+Apperently it is proper to have a unique hash fore each user stored in the database to pervent attacks using hash dicitionaries, ensure users can have the same password, protect against leaks and other security reasons so encryption salt fore password and token is added to the user table in backend/db/sql/migrations/01_recreate_tables.sql.
+
+// HE CREATES USER MODELS with salt and such
+// user for login and auth sahre a trait
+// he created get by username.
+
+// he adds rand, hmac and sha2 & base64-url
+// he creates an encrypt into base64 url function and an error
+
+// he adds pwd key and token key/ durration to the env and config 
+
+// he added a function to parse env strings to numbers, the get env parse although it could be used to parse multiple things
+
+// he made a function that takes encrypted content and turns it into base 64 as well as adding a #n# to it to denote the shema
+
+// he also made a validate password function that checks if a password matches the password reference-
+
+// he added an update password function to users and also added the crypt stuff to the model error
+
+// he creates a login function
+
+// I dont understand how the pwd salt and env salt are used.
+// maybe enc to b64 plays a part, wath out for the  Encrypt content struct
+// when generating a password the word and the salt are passed to the encb64 function wich creates hamc_sha512 from a byte and then updates it with first the content and then the salt.
+
+// BLAKE2b is apparently a better than sha512 and does not require hmac
+// Poly1305 is apparently verry fast and is used for encrypted messaging
+
+// basew 64 is to encode and decode from bytes
+
+// I dont like having into response for all the different gate things, maybe one gate error could handle the into response ones and you could just return GateError(Specific::Error) on the functions requiering into response?

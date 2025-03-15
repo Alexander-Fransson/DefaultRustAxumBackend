@@ -6,8 +6,6 @@ use axum::{http::StatusCode, response::{
 
 use crate::data_access;
 
-pub type Result<T> = core::result::Result<T, Error>;
-
 #[derive(Debug)]
 pub enum Error {
     DataAccess(data_access::Error),

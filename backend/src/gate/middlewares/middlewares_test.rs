@@ -163,9 +163,6 @@ use tower_cookies::{Cookie, CookieManagerLayer};
          .unwrap()
       ).await.unwrap();
 
-      // I have now incorporated cookies into the middleare however I dont want to fail the request if no cookie is found
-      // I guess that stuff can be done when I add some user authentication logic
-
       assert_eq!(request_context_response.status(), StatusCode::OK);
       assert_eq!(failed_response.status(), StatusCode::NOT_FOUND);
       assert_eq!(response_without_cookie.status(), StatusCode::NOT_FOUND);

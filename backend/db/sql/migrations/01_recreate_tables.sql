@@ -3,6 +3,7 @@ CREATE TABLE "user" (
     username VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     
+    -- Auth
     password VARCHAR(255) NOT NULL,
     password_encryption_salt UUID NOT NULL DEFAULT gen_random_uuid(),
     token_encryption_salt UUID NOT NULL DEFAULT gen_random_uuid(),
