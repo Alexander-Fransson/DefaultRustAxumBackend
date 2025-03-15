@@ -28,4 +28,9 @@ impl UserController {
         base_crud::delete::<Self, User>(db, id).await?;
         Ok(())
     }
+
+    pub async fn list_by_name(db: &DataAccessManager, name: &str) -> Result<Vec<User>> {
+        let users = base_crud::list_by_name::<Self, _>(db, name).await?;
+        Ok(users)
+    }
 }

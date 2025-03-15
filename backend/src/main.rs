@@ -21,6 +21,7 @@ mod views;
 mod gate;
 mod integration_tests;
 mod request_context;
+mod crypt;
 
 pub use error::{Error, Result};
 

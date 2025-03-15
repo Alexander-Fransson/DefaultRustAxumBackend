@@ -34,7 +34,7 @@ async fn create_user_handler(
 
     let user_password = user.password.clone();
     let user_email = user.email.clone();
-    let user_username = user.username.clone();
+    let user_username = user.name.clone();
 
     info!("user: {:#?}", user);
 
@@ -43,7 +43,7 @@ async fn create_user_handler(
 
     let user = User {
         id: user_id,
-        username: user_username,
+        name: user_username,
         email: user_email,
         password: user_password,
     };

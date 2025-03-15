@@ -174,6 +174,7 @@ Apperently it is proper to have a unique hash fore each user stored in the datab
 
 // BLAKE2b is apparently a better than sha512 and does not require hmac
 // Poly1305 is apparently verry fast and is used for encrypted messaging
+// for password hashing speed is a bad thing so use argon instead
 
 // basew 64 is to encode and decode from bytes
 

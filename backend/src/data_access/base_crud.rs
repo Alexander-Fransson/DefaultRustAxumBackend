@@ -49,6 +49,28 @@ Unpin + Send + GetStructFields
     Ok(rows)
 }
 
+// This is not useful fore the USER but it is useful for other entities
+
+pub async fn list_by_name<C, T>(db: &DataAccessManager, name: &str) -> Result<Vec<T>>
+where 
+C: Controller, 
+T: for<'r> FromRow<'r, PgRow> +
+Unpin + Send + GetStructFields 
+{
+    let connection = db.get_db_connection();
+
+    let struct_string = T::get_struct_fields().join(", ");
+    let query_string = format!("SELECT {} FROM {} WHERE name ILIKE $1", struct_string, C::TABLE_NAME);
+
+    let rows: Vec<T> = sqlx::query_as(&query_string)
+    .bind(format!("%{}%", &name))
+    .fetch_all(connection)
+    .await
+    .map_err(|e| Error::QueryFailed(e))?;
+
+    Ok(rows)
+}
+
 pub async fn create<C, T>(db: &DataAccessManager, data: T) -> Result<i64>
 where 
 C: Controller, 

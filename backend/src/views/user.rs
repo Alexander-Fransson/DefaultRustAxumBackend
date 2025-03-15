@@ -10,19 +10,19 @@ use crate::utils::traits_for_proc_macros::GetStructFields;
 #[derive(Debug, Serialize, Deserialize, FromRow, GetStructFields)]
 pub struct User {
     pub id: i64,
-    pub username: String,
+    pub name: String,
     pub email: String,
     pub password: String
 }
 
 #[derive(Serialize, FromRow, Clone, Debug, GetStructFields)]
 pub struct Username {
-    pub username: String
+    pub name: String
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct UserForRegister {
-    pub username: String,
+    pub name: String,
     pub email: String,
     pub password: String
 }

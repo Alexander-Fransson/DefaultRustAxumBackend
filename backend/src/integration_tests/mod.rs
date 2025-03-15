@@ -53,7 +53,7 @@ pub mod test {
         let request_url = format!("http://{}/api/v1/user/", get_env_variables().LISTENER_URL);
 
         let user = UserForRegister {
-            username: "test_username".to_string(),
+            name: "test_username".to_string(),
             email: "test_email".to_string(),
             password: "test_password".to_string(),
         };
