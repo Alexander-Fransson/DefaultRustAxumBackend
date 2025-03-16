@@ -1,6 +1,7 @@
 use std::fmt::Debug;
 use super::db_setup;
 use crate::utils;
+use crate::crypt;
 
 pub type Result<T> = core::result::Result<T, Error>;
 
@@ -9,7 +10,14 @@ pub enum Error {
 	DbSettupError(db_setup::Error),
 	QueryFailed(sqlx::Error),
 	Utils(utils::error::Error),
+	Crypt(crypt::Error),
 	EntityNotFound,
+}
+
+impl From<crypt::Error> for Error {
+	fn from(err: crypt::Error) -> Self {
+		Self::Crypt(err)
+	}
 }
 
 impl From<db_setup::Error> for Error {

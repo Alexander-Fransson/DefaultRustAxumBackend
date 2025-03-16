@@ -10,6 +10,7 @@ pub mod test {
         EncryptContent
     };
      
+    // could be tidyd up
 
     #[test]
     fn hash_password_ok() -> Result<()> {

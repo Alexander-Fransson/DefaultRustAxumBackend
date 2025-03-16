@@ -8,8 +8,6 @@ fn impl_get_struct_fields(ast: DeriveInput) -> TokenStream {
 
     let ident = ast.ident; 
 
-    println!("\nIDENT: {}\n", &ident);
-
     let fields: Vec<Ident> = match ast.data {
         syn::Data::Struct(data) => data.fields.into_iter().filter_map(|field| field.ident).collect(),
         _ => panic!("Only structs are supported"),

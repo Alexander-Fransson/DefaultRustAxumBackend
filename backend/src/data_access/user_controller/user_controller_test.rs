@@ -42,4 +42,29 @@ mod tests {
 
         Ok(())
     }
+
+    #[serial]
+    #[tokio::test]
+    async fn register_user_ok() -> Result<()> {
+        let db = _get_data_access_manager_for_tests().await;
+
+        let new_user = UserForRegister {
+            name: "test_user22".to_string(),
+            email: "email@example.com3333".to_string(),
+            password: "test_password24".to_string(),
+        };
+        
+        let create_req_id = UserController::register_user(&db, new_user).await?;
+
+        let user = UserController::_display_full_user(&db, create_req_id).await?;
+
+        assert_eq!(user.name, "test_user22");
+        assert_eq!(user.email, "email@example.com3333");
+        assert!(user.password.starts_with("#0#$argon2id")); // is encrypted with argon2
+        assert_eq!(user.password_encryption_salt.get_version_num(), 4); // uuid of type 4
+
+        UserController::delete(&db, user.id).await?;
+
+        Ok(())
+    }
 }
