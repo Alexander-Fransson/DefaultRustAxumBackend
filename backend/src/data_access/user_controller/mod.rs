@@ -1,8 +1,9 @@
 pub mod user_controller_test;
 
 use uuid::Uuid;
-use crate::crypt::{self, EncryptContent};
-use crate::views::user::{FullUserForTest, User, UserForRegister};
+use crate::utils::traits_for_proc_macros::GetStructFields;
+use crate::crypt::{self, password, EncryptContent};
+use crate::views::user::{FullUserForTest, User, UserForLogin, UserForRegister, UserForValidation};
 use crate::data_access::{
     base_crud::{self, Controller}, 
     DataAccessManager, 
@@ -69,5 +70,35 @@ impl UserController {
         .map_err(|e| Error::QueryFailed(e))?;
 
         Ok(user_id)
+    }
+
+    pub async fn login_user(db: &DataAccessManager, credentials: UserForLogin) -> Result<i64> {
+        
+        // get all users with an email and check if at least one is valid
+        let UserForLogin{email, password} = credentials;
+        let fields = UserForValidation::get_struct_fields().join(", ");
+        let query = format!("SELECT {} FROM {} WHERE email = $1", fields ,Self::TABLE_NAME);
+        let connection = db.get_db_connection();
+
+        let users_with_email: Vec<UserForValidation> = sqlx::query_as(&query)
+        .bind(email)
+        .fetch_all(connection)
+        .await
+        .map_err(|e| Error::QueryFailed(e))?;
+        
+        for user in users_with_email {
+            let enc_content = EncryptContent {
+                content: password.clone(),
+                salt: user.password_encryption_salt.to_string()
+            };
+
+            match password::validate_password(user.password, &enc_content) {
+                Ok(()) => return Ok(user.id),
+                Err(crypt::Error::PasswordInvalid) => continue,
+                Err(e) => return Err(Error::Crypt(e))
+            }
+        }
+
+        Err(Error::EntityNotFound)
     }
 }

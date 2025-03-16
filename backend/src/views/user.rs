@@ -39,8 +39,17 @@ pub struct FullUserForTest {
 }
 
 // might be kind to let the user use either the email or the username
-// #[derive(Deserialize)]
-// pub struct UserForLogin {
-//     pub email: String,
-//     pub password: String
-// }
+// but that would be a lot of work
+
+#[derive(Debug)]
+pub struct UserForLogin {
+    pub email: String,
+    pub password: String
+}
+
+#[derive(Debug, FromRow, GetStructFields)]
+pub struct UserForValidation {
+    pub id: i64,
+    pub password: String,
+    pub password_encryption_salt: Uuid
+}
