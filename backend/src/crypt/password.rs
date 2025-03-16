@@ -33,6 +33,9 @@ pub fn hash_password(content: &EncryptContent) -> Result<String> {
 // to geerate a user and get its salt from the server and then change its password
 
 pub fn validate_password(password_ref:String, enc_content: &EncryptContent) -> Result<()> {
+    println!("\nPASSWORD REF: {}\n", password_ref);
+    println!("\nENCRYPTED CONTENT: {:?}\n", enc_content);
+    
     let password = hash_password(enc_content)?;
 
     if password == password_ref {

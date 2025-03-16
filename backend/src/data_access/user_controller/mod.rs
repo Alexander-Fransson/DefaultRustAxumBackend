@@ -86,10 +86,14 @@ impl UserController {
         .await
         .map_err(|e| Error::QueryFailed(e))?;
         
+        println!("USERS {:?}", users_with_email);
+
+        // checks if the password provided encrypted with the password encryption salt is the same as the users password
         for user in users_with_email {
+            let salt_string = user.password_encryption_salt.to_string();
             let enc_content = EncryptContent {
                 content: password.clone(),
-                salt: user.password_encryption_salt.to_string()
+                salt: crypt::string_to_base_64(&salt_string)
             };
 
             match password::validate_password(user.password, &enc_content) {

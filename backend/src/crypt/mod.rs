@@ -8,6 +8,7 @@ use base64::{
     Engine
 };
 
+#[derive(Debug)]
 pub struct EncryptContent {
     pub content: String,
     pub salt: String
