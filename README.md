@@ -179,3 +179,5 @@ Apperently it is proper to have a unique hash fore each user stored in the datab
 // basew 64 is to encode and decode from bytes
 
 // I dont like having into response for all the different gate things, maybe one gate error could handle the into response ones and you could just return GateError(Specific::Error) on the functions requiering into response?
+
+// he uses a pwd_key for the sha512 but argon does not need a key. However blake does so when doing the token encryption you should add a key to the env

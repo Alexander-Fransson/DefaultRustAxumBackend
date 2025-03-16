@@ -1,11 +1,13 @@
 use std::fmt::Debug;
+use argon2::password_hash;
 
 pub type Result<T> = core::result::Result<T, Error>;
 
 #[derive(Debug)]
 pub enum Error {
-    FailedToTurnPasswordSaltIntoSaltString,
-    FailedToHashPassword(String)
+    FailedToTurnPasswordSaltIntoSaltString(password_hash::Error),
+    FailedToHashPassword(password_hash::Error),
+	PasswordInvalid
 }
 
 impl core::fmt::Display for Error {
