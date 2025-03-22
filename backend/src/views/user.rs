@@ -41,7 +41,7 @@ pub struct FullUserForTest {
 // might be kind to let the user use either the email or the username
 // but that would be a lot of work
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct UserForLogin {
     pub email: String,
     pub password: String

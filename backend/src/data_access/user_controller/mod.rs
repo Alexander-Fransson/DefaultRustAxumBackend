@@ -86,6 +86,10 @@ impl UserController {
         .await
         .map_err(|e| Error::QueryFailed(e))?;
         
+        if users_with_email.is_empty() {
+            return Err(Error::EntityNotFound);
+        }
+
         println!("USERS {:?}", users_with_email);
 
         // checks if the password provided encrypted with the password encryption salt is the same as the users password
@@ -103,6 +107,6 @@ impl UserController {
             }
         }
 
-        Err(Error::EntityNotFound)
+        Err(Error::IncorrectPassword)
     }
 }

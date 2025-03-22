@@ -43,8 +43,8 @@ pub async fn make_migrations(pool: &Pool<Postgres>) -> Result<()> {
 
 pub async fn create_connection_pool(connection_string: &str) -> Result<Pool<Postgres>> {
     let pool =PgPoolOptions::new()
-    .max_connections(5)
-    .acquire_timeout(Duration::from_secs(5))
+    .max_connections(20) // if pool times out in tests, increase this
+    .acquire_timeout(Duration::from_secs(15)) // or this
     .connect(connection_string)
     .await?;
 
