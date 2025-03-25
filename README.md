@@ -149,35 +149,17 @@ This needs the crate tower-cookies for the cookies middleware that allows cookie
 
 Apperently it is proper to have a unique hash fore each user stored in the database to pervent attacks using hash dicitionaries, ensure users can have the same password, protect against leaks and other security reasons so encryption salt fore password and token is added to the user table in backend/db/sql/migrations/01_recreate_tables.sql.
 
-// HE CREATES USER MODELS with salt and such
-// user for login and auth sahre a trait
-// he created get by username.
+In backend/src/views/user.rs tables to handle login and validation of passwords was created.
+I also made a list by name base and user controller but that is mostly irrelevant for authentication.
+To handle the encryption and hashing of the password I created a new crypt crate. 
+Here I created the hash and validate password functions in backend/src/crypt/password.rs. 
+For the encryption I used argon2 for bacouse it uses high memory consumption and is slow which makes it harder for attackers to try billions of guesses including with GPUs and ASICs. 
+Other alternative encryptiion methods are sha512, Poly1305 which is verry fast and used for message encryption and Blake2b which is both fast and secure, Speed is bad in passwordhashing though so poly can be usde for message encryption and blake can be used for jwt encryption. 
+I also created an encrypt into base64 function and added the base64 create. 
 
-// he adds rand, hmac and sha2 & base64-url
-// he creates an encrypt into base64 url function and an error
+Then in backend/src/data_access/user_controller/mod.rs I created a login and register user function.
+Register uses the uuid crate to generate a salt and transforms it to b64 to later use it as the encryption content for hashing the password.
+In the login function users are queried by email which are then filtered by password.
 
-// he adds pwd key and token key/ durration to the env and config 
 
-// he added a function to parse env strings to numbers, the get env parse although it could be used to parse multiple things
-
-// he made a function that takes encrypted content and turns it into base 64 as well as adding a #n# to it to denote the shema
-
-// he also made a validate password function that checks if a password matches the password reference-
-
-// he added an update password function to users and also added the crypt stuff to the model error
-
-// he creates a login function
-
-// I dont understand how the pwd salt and env salt are used.
-// maybe enc to b64 plays a part, wath out for the  Encrypt content struct
-// when generating a password the word and the salt are passed to the encb64 function wich creates hamc_sha512 from a byte and then updates it with first the content and then the salt.
-
-// BLAKE2b is apparently a better than sha512 and does not require hmac
-// Poly1305 is apparently verry fast and is used for encrypted messaging
-// for password hashing speed is a bad thing so use argon instead
-
-// basew 64 is to encode and decode from bytes
-
-// I dont like having into response for all the different gate things, maybe one gate error could handle the into response ones and you could just return GateError(Specific::Error) on the functions requiering into response?
-
-// he uses a pwd_key for the sha512 but argon does not need a key. However blake does so when doing the token encryption you should add a key to the env
+// continue with the generateon of a jwt token and using it for authentication in the request context generation.

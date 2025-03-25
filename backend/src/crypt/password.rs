@@ -11,7 +11,7 @@ pub fn hash_password(content: &EncryptContent) -> Result<String> {
     
     let EncryptContent {content, salt} = content;
 
-    // postgres might add padding ""=" to ensure the length is a multiple of 4
+    // postgres might add padding "=" to ensure the length is a multiple of 4
     // argon2 does not accept padding however
     let trimmed_salt = salt.trim_end_matches("=");  
 
@@ -29,18 +29,8 @@ pub fn hash_password(content: &EncryptContent) -> Result<String> {
     Ok(format!("#0#{}", hashed_password.to_string()))
 }
 
-// you should probably generate the b64 url here on the backend instead of the server so you dont have
-// to geerate a user and get its salt from the server and then change its password
-
 pub fn validate_password(password_ref:String, enc_content: &EncryptContent) -> Result<()> {
-    println!("\nPASSWORD REF: {}\n", password_ref);
-    println!("\nENCRYPTED CONTENT: {:?}\n", enc_content);
-    
     let password = hash_password(enc_content)?;
-
-    if password == password_ref {
-        Ok(())
-    } else {
-        Err(Error::PasswordInvalid)
-    }
+    if password == password_ref {Ok(())} 
+    else {Err(Error::PasswordInvalid)}
 }
