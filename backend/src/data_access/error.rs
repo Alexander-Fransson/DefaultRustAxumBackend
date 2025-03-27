@@ -12,7 +12,8 @@ pub enum Error {
 	Utils(utils::error::Error),
 	Crypt(crypt::Error),
 	EntityNotFound,
-	IncorrectPassword
+	IncorrectPassword,
+	JwtTokenWrongFormat
 }
 
 impl From<crypt::Error> for Error {

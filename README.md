@@ -174,18 +174,18 @@ In the login function users are queried by email which are then filtered by pass
 
 // what shall be created is a create_token function that returns user_id_b64u. expiration_b64u.singanture_b64u
 
-// he uses the time library 
+*// he uses the time library 
 
-// he creates time utils like 
+*// he creates time utils like 
 * now_utc which returns an offset date time struct 
 * format_time which takes the offset date time and returns a string
 * now_utc_plus_sec_str which takes a f64 and returns a string of such many seconds after now
 * parse_utc which takes a str& and returns an offsetdatetime
 
-// he creates b64 utils
+*// he creates b64 utils
 * b64 encode & decode
 
-// he creates a token struct
+*// he creates a token struct
 
 // he creates generate token and token sign into b64u private functions in crypt/token
 
@@ -193,7 +193,7 @@ In the login function users are queried by email which are then filtered by pass
 
 // he creates public functions that use each fuction
 
-// he implements display for token struct, this is used to mkae the toekn a string of the right format
+*// he implements display for token struct, this is used to mkae the toekn a string of the right format
 
 // he also implements the from str for token which takes a x.x.x.string and returns a token struct where ident and expiration is decoded from b64
 

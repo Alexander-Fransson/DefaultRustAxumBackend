@@ -1,14 +1,29 @@
 use std::fmt::Debug;
 use argon2::password_hash;
 
+use crate::utils;
+
 pub type Result<T> = core::result::Result<T, Error>;
 
 #[derive(Debug)]
 pub enum Error {
+	// password
     FailedToTurnPasswordSaltIntoSaltString(password_hash::Error),
     FailedToHashPassword(password_hash::Error),
 	FailedToDecodeBase64(base64::DecodeError),
-	PasswordInvalid
+	PasswordInvalid,
+
+	// jwt
+	JwtTokenWrongFormat,
+	JwtB64DecodingError(utils::Error),
+	FailedToParseUserIdToB64(String)
+
+}
+
+impl From<utils::Error> for Error {
+	fn from(value: utils::Error) -> Self {
+		Error::JwtB64DecodingError(value)
+	}
 }
 
 impl core::fmt::Display for Error {
