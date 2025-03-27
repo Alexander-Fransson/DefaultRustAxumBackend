@@ -1,0 +1,4 @@
+[tasks.test_utils]
+command = "cargo"
+description = "Run the tests in the utils crate"
+args = ["test", "--", "utils::utils_test::tests::"]

@@ -145,6 +145,10 @@ What I have done is a a mw that inserts a root request_context struct into the r
 
 This needs the crate tower-cookies for the cookies middleware that allows cookies extraction. To use the cookies extractor you need to add a Cookie manager layer at the end of the routes as done in main and the middleware tests. Then specific cokkies can be accessed from the middleware using the .get, .name and .value can be used to access the different stuff. I also updated the middlewares error to handdle the cookie value extraction in backend/src/gate/middlewares/mw_implant_request_context.rs. A useful function to use an error in a map is the transponse function which turns an Option(Result) into a Result(Option). Lastly it is worth to mention that the cookie accessed by the cookie manager layer is a header with the key of "Cookie" and a value of "x=x". 
 
+### Testing
+
+To make testing easyer I installed cargo-make with $ cargo install cargo-make $ which allows you to make custom scripts in backend/Makefile.toml
+
 ### 10 JWT authetication
 
 Apperently it is proper to have a unique hash fore each user stored in the database to pervent attacks using hash dicitionaries, ensure users can have the same password, protect against leaks and other security reasons so encryption salt fore password and token is added to the user table in backend/db/sql/migrations/01_recreate_tables.sql.
@@ -161,5 +165,60 @@ Then in backend/src/data_access/user_controller/mod.rs I created a login and reg
 Register uses the uuid crate to generate a salt and transforms it to b64 to later use it as the encryption content for hashing the password.
 In the login function users are queried by email which are then filtered by password.
 
+// I created string to b64 and vice versa tests in backend/src/utils/base64.rs
+
+
+////////////////////
 
 // continue with the generateon of a jwt token and using it for authentication in the request context generation.
+
+// what shall be created is a create_token function that returns user_id_b64u. expiration_b64u.singanture_b64u
+
+// he uses the time library 
+
+// he creates time utils like 
+* now_utc which returns an offset date time struct 
+* format_time which takes the offset date time and returns a string
+* now_utc_plus_sec_str which takes a f64 and returns a string of such many seconds after now
+* parse_utc which takes a str& and returns an offsetdatetime
+
+// he creates b64 utils
+* b64 encode & decode
+
+// he creates a token struct
+
+// he creates generate token and token sign into b64u private functions in crypt/token
+
+// he aso creates a validate token private function
+
+// he creates public functions that use each fuction
+
+// he implements display for token struct, this is used to mkae the toekn a string of the right format
+
+// he also implements the from str for token which takes a x.x.x.string and returns a token struct where ident and expiration is decoded from b64
+
+// then after making tests he creates the priveate generate token function content and returns the token struct
+
+// he creates the content for the validate token sign and expiration
+
+// he creates the content for the token sign into b64u which uses the sha512 encrypt function to generate a signature, this signature is then evaluated en the validate token function
+
+// the in web/mod he creates set token cookie and remove token cookie functions in adition to an AUTH_TOKEN cookie name const.
+
+// set token cookie generates a token from the users id and token salt and pits it into a cookie which is added to the tower cookies object
+
+// he then changes the web/routs/login function to set a cookie
+
+// then he creates a ctx_resolve function wihich gets the auth cookie, parses the cookie string to a token struct, gets a user theough the UserBmc, validates the token using the users token salt, updates the token by setting a new and creates new request context. 
+
+// the ctx resplve middleware runs the above function and if it retuns an error it removes the cookie from the tower cookies.
+
+// the ctx resolve middleware is added to the main routes.
+
+// then he creates a logof paload struct that just has logof as a bool varoable
+
+// he then creates a remove cookie function in web mod
+
+// then he just creates a logoff handler which just removes the cookie
+
+

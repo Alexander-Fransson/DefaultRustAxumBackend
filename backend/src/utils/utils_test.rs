@@ -3,7 +3,29 @@ mod tests {
 
     use super::super::*;
     use serde::Serialize;
-    use super::super::error::Result;
+    use super::super::{
+        error::Result,
+        base64::{
+            string_to_base_64,
+            b64_to_string
+        },
+    }; 
+
+    #[test]
+    fn string_to_base_64_ok() -> Result<()> {
+        let string = "hello";
+        let base64_string = string_to_base_64(string);
+        assert_eq!(base64_string, "aGVsbG8=");
+        Ok(())
+    }
+
+    #[test]
+    fn b64_str_to_normal_str_ok() -> Result<()> {
+        let b64_string = "aGVsbG8=";
+        let normal_string = b64_to_string(b64_string)?;
+        assert_eq!(normal_string, "hello");
+        Ok(())
+    }
 
     #[test]
     fn turn_struct_with_serde_serialize_into_hashmap_ok() -> Result<()> {

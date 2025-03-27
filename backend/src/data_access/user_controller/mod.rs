@@ -1,6 +1,7 @@
 pub mod user_controller_test;
 
 use uuid::Uuid;
+use crate::utils;
 use crate::utils::traits_for_proc_macros::GetStructFields;
 use crate::crypt::{self, password, EncryptContent};
 use crate::views::user::{FullUserForTest, User, UserForLogin, UserForRegister, UserForValidation};
@@ -49,7 +50,7 @@ impl UserController {
     pub async fn register_user(db: &DataAccessManager, user: UserForRegister) -> Result<i64> {
 
         let pwd_salt_uuid = Uuid::new_v4();
-        let pwd_salt_b64 = crypt::string_to_base_64(&pwd_salt_uuid.to_string());
+        let pwd_salt_b64 = utils::base64::string_to_base_64(&pwd_salt_uuid.to_string());
 
         let enc_content = EncryptContent {
             content: user.password,
@@ -97,7 +98,7 @@ impl UserController {
             let salt_string = user.password_encryption_salt.to_string();
             let enc_content = EncryptContent {
                 content: password.clone(),
-                salt: crypt::string_to_base_64(&salt_string)
+                salt: utils::base64::string_to_base_64(&salt_string)
             };
 
             match password::validate_password(user.password, &enc_content) {

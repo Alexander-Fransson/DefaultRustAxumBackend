@@ -1,5 +1,8 @@
 pub mod error;
 pub mod traits_for_proc_macros;
+pub mod time;
+pub mod base64;
+
 mod utils_test;
 
 use std::collections::HashMap;

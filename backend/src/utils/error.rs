@@ -4,10 +4,19 @@ pub type Result<T> = core::result::Result<T, Error>;
 
 #[derive(Debug)]
 pub enum Error {
-    SerdeJson(serde_json::error::Error),
+    
+	// struct to hashmap
+	SerdeJson(serde_json::error::Error),
 	ExpectedStruct,
 	FailedToTurnJsonValueIntoMap,
-	FailedToTurnJsonValueIntoStr
+	FailedToTurnJsonValueIntoStr,
+	
+	// time
+	FailedToFormtOffsetDateTime(String),
+
+	// b64
+	FailedToDecodeB64(String),
+	FailedToDecodeB64Bytes(String)
 }
 
 impl From<serde_json::error::Error> for Error {
