@@ -2,7 +2,7 @@
 
 use std::fmt::Display;
 use std::str::FromStr;
-use super::{Error, Result};
+use super::{EncryptContent, Error, Result};
 use crate::utils::base64::{b64_to_string, string_to_base_64};
 
 // ignore never read
@@ -53,4 +53,18 @@ impl Display for JwtToken {
             self.b64_signature
         )
     }
+}
+
+fn _create_token_signature(
+    user_id: i64, 
+    expiration: &str, 
+    token_salt: &str, 
+    encryption_key: &[u8]
+) -> String {
+    // create an encryption with blake 2b function
+    todo!()
+}
+
+fn encrypt_token(enc_content: &EncryptContent) -> String {
+    todo!()
 }

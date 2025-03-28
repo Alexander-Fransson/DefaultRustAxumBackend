@@ -7,6 +7,10 @@ pub type Result<T> = core::result::Result<T, Error>;
 
 #[derive(Debug)]
 pub enum Error {
+
+	// blake2b
+	FailedToCreateBlake2bHasher(String),
+
 	// password
     FailedToTurnPasswordSaltIntoSaltString(password_hash::Error),
     FailedToHashPassword(password_hash::Error),

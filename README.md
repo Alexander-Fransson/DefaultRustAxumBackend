@@ -165,7 +165,8 @@ Then in backend/src/data_access/user_controller/mod.rs I created a login and reg
 Register uses the uuid crate to generate a salt and transforms it to b64 to later use it as the encryption content for hashing the password.
 In the login function users are queried by email which are then filtered by password.
 
-// I created string to b64 and vice versa tests in backend/src/utils/base64.rs
+// I created string to b64 and vice versa + tests in backend/src/utils/base64.rs
+// I created token struct and implemented string and display in backend/src/crypt/jwt_token.rs
 
 
 ////////////////////

@@ -141,6 +141,7 @@ dependencies = [
  "argon2",
  "axum",
  "base64",
+ "blake2",
  "proc-macros",
  "reqwest",
  "serde",

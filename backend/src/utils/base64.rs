@@ -20,3 +20,14 @@ pub fn b64_to_string(b64: &str) -> Result<String> {
 
     Ok(string_from_b64)
 }
+
+pub fn b64_to_u8(b64: &str) -> Result<Vec<u8>> {
+    let bytes = STANDARD.decode(b64)
+    .map_err(|e| Error::FailedToDecodeB64(e.to_string()))?;
+    
+    Ok(bytes)
+}
+
+pub fn u8_to_b64(bytes: &[u8]) -> String {
+    STANDARD.encode(bytes)
+}
