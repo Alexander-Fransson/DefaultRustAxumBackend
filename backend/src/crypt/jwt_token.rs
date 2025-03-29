@@ -2,8 +2,8 @@
 
 use std::fmt::Display;
 use std::str::FromStr;
-use super::{EncryptContent, Error, Result};
-use crate::utils::base64::{b64_to_string, string_to_base_64};
+use super::{EncryptContent, Error, Result, encrypt_blake2b_mac_512};
+use crate::{config_env::get_env_variables, utils::base64::{b64_to_string, string_to_base_64}};
 
 // ignore never read
 #[allow(dead_code)]
@@ -65,6 +65,9 @@ fn _create_token_signature(
     todo!()
 }
 
-fn encrypt_token(enc_content: &EncryptContent) -> String {
-    todo!()
+fn sign_token(enc_content: &EncryptContent) -> Result<String> {
+    encrypt_blake2b_mac_512(
+        &get_env_variables().BLAKE2B_KEY, 
+        enc_content
+    )
 }

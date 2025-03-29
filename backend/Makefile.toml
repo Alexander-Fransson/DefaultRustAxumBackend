@@ -2,3 +2,8 @@
 command = "cargo"
 description = "Run the tests in the utils crate"
 args = ["test", "--", "utils::utils_test::tests::"]
+
+[tasks.test_crypt]
+command = "cargo"
+description = "Run the tests in the crypt crate"
+args = ["test", "--", "crypt::crypt_test::tests::"]
