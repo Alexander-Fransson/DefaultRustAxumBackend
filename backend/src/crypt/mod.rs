@@ -31,6 +31,7 @@ pub fn encrypt_blake2b_mac_512(key: &[u8], enc_content: &EncryptContent) -> Resu
     hasher.update(salt.as_bytes());
 
     let result = hasher.finalize().into_bytes();
+    let with_enc_mark = format!("#1#{}", u8_to_b64(&result));
 
-    Ok(u8_to_b64(&result))
+    Ok(with_enc_mark)
 }

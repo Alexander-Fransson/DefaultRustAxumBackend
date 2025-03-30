@@ -13,6 +13,7 @@ pub enum Error {
 	
 	// time
 	FailedToFormtOffsetDateTime(String),
+	FailedToParseOffsetDateTime(String),
 
 	// b64
 	FailedToDecodeB64(String),

@@ -20,7 +20,10 @@ pub enum Error {
 	// jwt
 	JwtTokenWrongFormat,
 	JwtB64DecodingError(utils::Error),
-	FailedToParseUserIdToB64(String)
+	FailedToParseUserIdToB64(String),
+	JwtTokenInvalidSignature,
+	JwtTokenExpirationWrongFormat(String),
+	JwtTokenExpired
 
 }
 

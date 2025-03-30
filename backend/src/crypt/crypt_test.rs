@@ -23,7 +23,7 @@ pub mod tests {
 
         let signature = encrypt_blake2b_mac_512(&test_key, &test_enc_content)?;
 
-        assert_eq!(&signature, "3InVh31+qBSdgCzxOD6bUigENgiJcza+BfA6Uj2ETWZ6geu0ID5vOIG/CGiB2gg5eBMeh9Map4GeuBasuQbpsQ==");
+        assert_eq!(&signature, "#1#3InVh31+qBSdgCzxOD6bUigENgiJcza+BfA6Uj2ETWZ6geu0ID5vOIG/CGiB2gg5eBMeh9Map4GeuBasuQbpsQ==");
         
         Ok(())
     }

@@ -18,7 +18,8 @@ pub struct EnvVariableContainer {
     pub DB_CONNECTION_STRING: String,
     pub DB_DEFAULT_USER_CONNECTION_STRING: String,
     pub LISTENER_URL: &'static str,
-    pub BLAKE2B_KEY: Vec<u8>
+    pub JWT_KEY: Vec<u8>,
+    pub JWT_TOKEN_DURRATION_SEC: f64
 }
 impl EnvVariableContainer {
     pub fn load_vars_from_env() -> Result<EnvVariableContainer> {
@@ -27,7 +28,8 @@ impl EnvVariableContainer {
             DB_CONNECTION_STRING: get_var_from_env_parsed("DB_CONNECTION_STRING")?,
             DB_DEFAULT_USER_CONNECTION_STRING: get_var_from_env_parsed("DB_DEFAULT_USER_CONNECTION_STRING")?,
             LISTENER_URL: "127.0.0.1:3000",
-            BLAKE2B_KEY: get_env_b64_var_as_u8("BLAKE2B_KEY")?
+            JWT_KEY: get_env_b64_var_as_u8("JWT_KEY")?,
+            JWT_TOKEN_DURRATION_SEC: get_var_from_env_parsed("JWT_TOKEN_DURRATION_SEC")?
         })
     }
 }
