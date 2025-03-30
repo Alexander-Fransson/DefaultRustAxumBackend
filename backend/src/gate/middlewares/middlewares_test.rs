@@ -17,7 +17,7 @@ mod tests {
    use tower::ServiceExt;
 use tower_cookies::{Cookie, CookieManagerLayer};
 
-   use crate::{gate::AUTH_COOKIE_NAME, request_context::RequestContext};
+   use crate::{gate::cookie::AUTH_COOKIE_NAME, request_context::RequestContext};
    use super::super::{mw_implant_request_context, mw_require_request_context};
 
 

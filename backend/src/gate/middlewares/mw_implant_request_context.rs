@@ -6,7 +6,7 @@ use tower_cookies::Cookies;
 use crate::gate::error::GateResult;
 use crate::request_context::RequestContext;
 use super::MiddlewareError;
-use crate::gate::AUTH_COOKIE_NAME;
+use crate::gate::cookie::AUTH_COOKIE_NAME;
 
 // next step is to test this
 

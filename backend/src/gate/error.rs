@@ -10,6 +10,7 @@ use super::{
     custom_extractors,
     routes
 };
+use crate::crypt;
 
 pub type GateResult<T> = core::result::Result<T, GateError>;
 
@@ -17,7 +18,14 @@ pub type GateResult<T> = core::result::Result<T, GateError>;
 pub enum GateError {
     Middleware(middlewares::MiddlewareError),
     Extractor(custom_extractors::Error),
-    Route(routes::Error)
+    Route(routes::Error),
+    Crypt(crypt::Error)
+}
+
+impl From<crypt::Error> for GateError {
+    fn from(error: crypt::Error) -> Self {
+        GateError::Crypt(error)
+    }
 }
 
 impl From<middlewares::MiddlewareError> for GateError {

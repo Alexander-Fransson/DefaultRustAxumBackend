@@ -2,5 +2,7 @@ pub mod routes;
 pub mod middlewares;
 pub mod custom_extractors;
 pub mod error;
+pub mod cookie;
 
-pub const AUTH_COOKIE_NAME: &str = "auth";
+pub use error::{GateError, GateResult};
+

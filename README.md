@@ -166,7 +166,10 @@ Register uses the uuid crate to generate a salt and transforms it to b64 to late
 In the login function users are queried by email which are then filtered by password.
 
 // I created string to b64 and vice versa + tests in backend/src/utils/base64.rs
-// I created token struct and implemented string and display in backend/src/crypt/jwt_token.rs
+// I created token struct and implemented string and display in backend/src/crypt/jwt_token/mod.rs
+// I also made new and validate functions and tested them
+// I made and create and remove jwt_cookie functions in /home/megatron/Documents/DefaultRustAxumBackend/backend/src/gate/cookie.rs
+
 
 
 ////////////////////
@@ -188,25 +191,25 @@ In the login function users are queried by email which are then filtered by pass
 
 *// he creates a token struct
 
-// he creates generate token and token sign into b64u private functions in crypt/token
+*// he creates generate token and token sign into b64u private functions in crypt/token
 
-// he aso creates a validate token private function
+*// he aso creates a validate token private function
 
-// he creates public functions that use each fuction
+*// he creates public functions that use each fuction
 
 *// he implements display for token struct, this is used to mkae the toekn a string of the right format
 
-// he also implements the from str for token which takes a x.x.x.string and returns a token struct where ident and expiration is decoded from b64
+*// he also implements the from str for token which takes a x.x.x.string and returns a token struct where ident and expiration is decoded from b64
 
-// then after making tests he creates the priveate generate token function content and returns the token struct
+*// then after making tests he creates the priveate generate token function content and returns the token struct
 
-// he creates the content for the validate token sign and expiration
+*// he creates the content for the validate token sign and expiration
 
-// he creates the content for the token sign into b64u which uses the sha512 encrypt function to generate a signature, this signature is then evaluated en the validate token function
+*// he creates the content for the token sign into b64u which uses the sha512 encrypt function to generate a signature, this signature is then evaluated en the validate token function
 
-// the in web/mod he creates set token cookie and remove token cookie functions in adition to an AUTH_TOKEN cookie name const.
+*// the in web/mod he creates set token cookie and remove token cookie functions in adition to an AUTH_TOKEN cookie name const.
 
-// set token cookie generates a token from the users id and token salt and pits it into a cookie which is added to the tower cookies object
+*// set token cookie generates a token from the users id and token salt and pits it into a cookie which is added to the tower cookies object
 
 // he then changes the web/routs/login function to set a cookie
 
