@@ -59,9 +59,9 @@ mod tests {
 
         let new_user = generate_user_for_register();
         
-        let create_req_id = UserController::register_user(&db, new_user).await?;
+        let create_req = UserController::register_user(&db, new_user).await?;
 
-        let user = UserController::_display_full_user(&db, create_req_id).await?;
+        let user = UserController::_display_full_user(&db, create_req.id).await?;
 
         assert_eq!(user.name, "test_user2");
         assert_eq!(user.email, TEST_EMAIL);
@@ -79,16 +79,16 @@ mod tests {
         let db = _get_data_access_manager_for_tests().await;
 
         let new_user = generate_user_for_register();
-        let create_req_id = UserController::register_user(&db, new_user).await?;
+        let create_req = UserController::register_user(&db, new_user).await?;
 
         let login_credentials = UserForLogin {
             email: TEST_EMAIL.to_string(),
             password: TEST_PASSWORD.to_string(),
         };
 
-        let login_res_id = UserController::login_user(&db, login_credentials.clone()).await?;
+        let login_res = UserController::login_user(&db, login_credentials.clone()).await?;
 
-        assert_eq!(login_res_id, create_req_id);
+        assert_eq!(login_res.id, create_req.id);
 
         let bad_password_credentials = UserForLogin {
             email: TEST_EMAIL.to_string(),
@@ -98,7 +98,7 @@ mod tests {
         let bad_login_res = UserController::login_user(&db, bad_password_credentials).await;
         assert!(matches!(bad_login_res, Err(Error::IncorrectPassword)));
 
-        UserController::delete(&db, create_req_id).await?;
+        UserController::delete(&db, create_req.id).await?;
 
         let not_found_login_res = UserController::login_user(&db, login_credentials).await;
         assert!(matches!(not_found_login_res, Err(Error::EntityNotFound)));

@@ -4,7 +4,7 @@ use uuid::Uuid;
 use crate::utils;
 use crate::utils::traits_for_proc_macros::GetStructFields;
 use crate::crypt::{self, password, EncryptContent};
-use crate::views::user::{FullUserForTest, User, UserForLogin, UserForRegister, UserForValidation};
+use crate::views::user::{FullUserForTest, User, UserForAuth, UserForLogin, UserForRegister, UserForValidation};
 use crate::data_access::{
     base_crud::{self, Controller}, 
     DataAccessManager, 
@@ -47,7 +47,9 @@ impl UserController {
         Ok(user)
     }
 
-    pub async fn register_user(db: &DataAccessManager, user: UserForRegister) -> Result<i64> {
+    pub async fn register_user(db: &DataAccessManager, user: UserForRegister) -> Result<UserForAuth> {
+
+        // make it retunr a user that may be used for setting the jwt
 
         let pwd_salt_uuid = Uuid::new_v4();
         let pwd_salt_b64 = utils::base64::string_to_base_64(&pwd_salt_uuid.to_string());
@@ -58,10 +60,10 @@ impl UserController {
         };
         let encrypted_password = crypt::password::hash_password(&enc_content)?;
 
-        let query = format!("INSERT INTO {} (name, email, password, password_encryption_salt) VALUES ($1, $2, $3, $4) RETURNING id", Self::TABLE_NAME);
+        let query = format!("INSERT INTO {} (name, email, password, password_encryption_salt) VALUES ($1, $2, $3, $4)", Self::TABLE_NAME);
         let connection = db.get_db_connection();
 
-        let (user_id,) = sqlx::query_as::<_, (i64,)>(&query)
+        let auth: UserForAuth = sqlx::query_as(&query)
         .bind(user.name)
         .bind(user.email)
         .bind(encrypted_password)
@@ -70,10 +72,10 @@ impl UserController {
         .await
         .map_err(|e| Error::QueryFailed(e))?;
 
-        Ok(user_id)
+        Ok(auth)
     }
 
-    pub async fn login_user(db: &DataAccessManager, credentials: UserForLogin) -> Result<i64> {
+    pub async fn login_user(db: &DataAccessManager, credentials: UserForLogin) -> Result<UserForAuth> {
         
         // get all users with an email and check if at least one is valid
         let UserForLogin{email, password} = credentials;
@@ -102,7 +104,7 @@ impl UserController {
             };
 
             match password::validate_password(user.password, &enc_content) {
-                Ok(()) => return Ok(user.id),
+                Ok(()) => return Ok(UserForAuth { id: user.id, token_encryption_salt: user.token_encryption_salt }),
                 Err(crypt::Error::PasswordInvalid) => continue,
                 Err(e) => return Err(Error::Crypt(e))
             }
