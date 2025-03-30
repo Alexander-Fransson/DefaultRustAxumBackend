@@ -4,7 +4,7 @@ use uuid::Uuid;
 use crate::utils;
 use crate::utils::traits_for_proc_macros::GetStructFields;
 use crate::crypt::{self, password, EncryptContent};
-use crate::views::user::{FullUserForTest, User, UserForAuth, UserForLogin, UserForRegister, UserForValidation};
+use crate::views::user::{FullUserForTest, GettableUser, User, UserForAuth, UserForLogin, UserForRegister, UserForValidation};
 use crate::data_access::{
     base_crud::{self, Controller}, 
     DataAccessManager, 
@@ -22,7 +22,8 @@ impl UserController {
 
     // most of these are only for demonstration purpuses
 
-    pub async fn get(db: &DataAccessManager, id: i64) -> Result<User> {
+    pub async fn get<U>(db: &DataAccessManager, id: i64) -> Result<U> 
+    where U: GettableUser{
         let user = base_crud::get::<Self, _>(db, id).await?;
         Ok(user)
     }

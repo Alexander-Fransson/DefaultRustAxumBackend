@@ -1,5 +1,5 @@
 use config_env::get_env_variables;
-use gate::routes::user_routes;
+use gate::routes::{auth_routes, user_routes};
 use log::tracer_config::enable_tracing;
 use tower_cookies::CookieManagerLayer;
 use tracing::info;
@@ -9,7 +9,7 @@ use tokio::net::TcpListener;
 use crate::data_access::DataAccessManager;
 use gate::middlewares::{
     mw_implant_request_context,
-    mw_require_request_context
+    //mw_require_request_context
 };
 
 mod log;
@@ -37,12 +37,15 @@ async fn main() -> Result<()> {
 async fn serve_server() -> Result<()> {
             
     let data_access_manager = DataAccessManager::new().await?;
-    let user_routes = user_routes(data_access_manager)
+    let user_routes = user_routes(data_access_manager.clone())
     //.route_layer(middleware::from_fn(mw_require_request_context))
     ; // now it just has to be tested and documented, remember that the impl response had to be done in the gate error
 
+    let auth_routes = auth_routes(data_access_manager.clone());
+
     let main_router = Router::new()
     .nest("/api/v1", user_routes)
+    .nest("/api/v1", auth_routes)
     .route("/hello_word", get(|| async {"Hello, World!"}))
     .layer(middleware::from_fn(mw_implant_request_context))
     .layer(CookieManagerLayer::new())

@@ -5,7 +5,7 @@ mod tests {
     // sometimes the pool times out, the tests work individually though
 
     use crate::data_access::_get_data_access_manager_for_tests;
-    use crate::views::user::{UserForLogin, UserForRegister};
+    use crate::views::user::{User, UserForLogin, UserForRegister};
     use crate::data_access::{Result, Error};
     use super::super::UserController;
 
@@ -29,7 +29,7 @@ mod tests {
         
         let create_req_id = UserController::create(&db, new_user).await?;
 
-        let user = UserController::get(&db, create_req_id).await?;
+        let user= UserController::get::<User>(&db, create_req_id).await?;
 
         assert_eq!(user.name, "test_user2");
 

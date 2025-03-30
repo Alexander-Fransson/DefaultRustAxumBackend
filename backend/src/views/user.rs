@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use sqlx::prelude::FromRow;
+use sqlx::{postgres::PgRow, prelude::FromRow};
 use proc_macros::GetStructFields;
 use uuid::Uuid;
 use crate::utils::traits_for_proc_macros::GetStructFields;
@@ -8,6 +8,8 @@ use crate::utils::traits_for_proc_macros::GetStructFields;
 // although for axum only this django like structure might suffice
 
 // will this ever be used?
+
+pub trait GettableUser: for<'r> FromRow<'r, PgRow> + Unpin + Send + GetStructFields {}
 
 #[derive(Debug, Serialize, Deserialize, FromRow, GetStructFields)]
 pub struct User {
@@ -55,8 +57,11 @@ pub struct UserForValidation {
     pub token_encryption_salt: String
 }
 
-#[derive(Debug, FromRow)]
+#[derive(Debug, FromRow, GetStructFields)]
 pub struct UserForAuth {
     pub id: i64,
     pub token_encryption_salt: String
 }
+
+impl GettableUser for UserForAuth {}
+impl GettableUser for User {}

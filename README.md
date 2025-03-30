@@ -211,11 +211,11 @@ In the login function users are queried by email which are then filtered by pass
 
 *// set token cookie generates a token from the users id and token salt and pits it into a cookie which is added to the tower cookies object
 
-// he then changes the web/routs/login function to set a cookie
+*// he then changes the web/routs/login function to set a cookie
 
-// then he creates a ctx_resolve function wihich gets the auth cookie, parses the cookie string to a token struct, gets a user theough the UserBmc, validates the token using the users token salt, updates the token by setting a new and creates new request context. 
+*// then he creates a ctx_resolve function wihich gets the auth cookie, parses the cookie string to a token struct, gets a user theough the UserBmc, validates the token using the users token salt, updates the token by setting a new and creates new request context. 
 
-// the ctx resplve middleware runs the above function and if it retuns an error it removes the cookie from the tower cookies.
+*// the ctx resplve middleware runs the above function and if it retuns an error it removes the cookie from the tower cookies.
 
 // the ctx resolve middleware is added to the main routes.
 

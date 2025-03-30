@@ -3,15 +3,21 @@ use axum::{http::StatusCode, response::{
 	Response
 }};
 use std::num::ParseIntError;
-use crate::gate::custom_extractors;
+use crate::{data_access, gate::custom_extractors};
 use crate::request_context;
 
 
 #[derive(Debug, Clone)]
 pub enum MiddlewareError {
 	ParseError,
-	RequestContextError(request_context::Error)
+	RequestContextError(request_context::Error),
+	DataAccess(String),
+	MissingAuthCookie,
+	InvalidJwt(String),
+	FailedToSetJwtCookie(String),
+	FailedToCreateRequestContext(String)
 }
+
 
 impl From<ParseIntError> for MiddlewareError {
     fn from(_err: ParseIntError) -> Self {
