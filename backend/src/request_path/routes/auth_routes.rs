@@ -1,11 +1,11 @@
 use serde_json::{json, Value};
 use tower_cookies::Cookies;
-use crate::{gate::cookie::set_jwt_cookie, views::user::UserForRegister};
+use crate::{request_path::cookie::set_jwt_cookie, views::user::UserForRegister};
 use crate::views::user::UserForLogin;
 use crate::data_access:: DataAccessManager;
-use super::super::GateResult;
-use crate::gate::cookie::delete_jwt_cookie;
-use super::Error;
+use crate::request_path::Result;
+use crate::request_path::cookie::delete_jwt_cookie;
+use crate::request_path::Error;
 use axum::{
     Router,
     Json,
@@ -30,7 +30,7 @@ pub fn auth_routes(da: DataAccessManager) -> Router {
     .with_state(da)
 }
 
-async fn logout_handler(cookies: Cookies) -> GateResult<Json<Value>> {
+async fn logout_handler(cookies: Cookies) -> Result<Json<Value>> {
     delete_jwt_cookie(&cookies)?;
     Ok(generate_success_json())
 }
@@ -39,9 +39,9 @@ async fn login_handler(
     cookies: Cookies,
     State(da): State<DataAccessManager>, 
     Json(credentials): Json<UserForLogin>
-) -> GateResult<Json<Value>> {
+) -> Result<Json<Value>> {
     let token_parts = UserController::login_user(&da, credentials).await
-    .map_err(|e| Error::DataAccess(e))?;
+    .map_err(|e| Error::DataAccess(e.to_string()))?;
 
     set_jwt_cookie(&cookies, token_parts.id, &token_parts.token_encryption_salt)?;
 
@@ -52,9 +52,9 @@ async fn register_handler(
     cookies: Cookies,
     State(da): State<DataAccessManager>,
     Json(user): Json<UserForRegister>
-) -> GateResult<Json<Value>> {
+) -> Result<Json<Value>> {
     let token_parts = UserController::register_user(&da, user).await
-    .map_err(|e| Error::DataAccess(e))?;
+    .map_err(|e| Error::DataAccess(e.to_string()))?;
 
     set_jwt_cookie(&cookies, token_parts.id, &token_parts.token_encryption_salt)?;
     

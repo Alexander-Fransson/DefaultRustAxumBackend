@@ -1,5 +1,5 @@
 use config_env::get_env_variables;
-use gate::routes::{auth_routes, user_routes};
+use request_path::routes::{auth_routes, user_routes};
 use log::tracer_config::enable_tracing;
 use tower_cookies::CookieManagerLayer;
 use tracing::info;
@@ -7,8 +7,8 @@ use axum::{middleware, Router};
 use axum::routing::get;
 use tokio::net::TcpListener;
 use crate::data_access::DataAccessManager;
-use gate::middlewares::{
-    mw_implant_request_context,
+use request_path::middlewares::{
+    mw_implant_request_context_if_jwt, mw_require_request_context,
     //mw_require_request_context
 };
 
@@ -18,7 +18,7 @@ mod error;
 mod utils;
 pub mod data_access;
 mod views;
-mod gate;
+mod request_path;
 mod integration_tests;
 mod request_context;
 mod crypt;
@@ -37,17 +37,21 @@ async fn main() -> Result<()> {
 async fn serve_server() -> Result<()> {
             
     let data_access_manager = DataAccessManager::new().await?;
-    let user_routes = user_routes(data_access_manager.clone())
-    //.route_layer(middleware::from_fn(mw_require_request_context))
-    ; // now it just has to be tested and documented, remember that the impl response had to be done in the gate error
+    let plane_user_routes = user_routes(data_access_manager.clone());
+    let user_routes_requiering_request_context = user_routes(data_access_manager.clone())
+    .layer(middleware::from_fn(mw_require_request_context)); 
 
     let auth_routes = auth_routes(data_access_manager.clone());
 
     let main_router = Router::new()
-    .nest("/api/v1", user_routes)
+    .nest("/api/v1", plane_user_routes)
     .nest("/api/v1", auth_routes)
+    .nest("login_required/api/v1", user_routes_requiering_request_context)
     .route("/hello_word", get(|| async {"Hello, World!"}))
-    .layer(middleware::from_fn(mw_implant_request_context))
+    .layer(middleware::from_fn_with_state(
+        data_access_manager.clone(),
+        mw_implant_request_context_if_jwt
+    ))
     .layer(CookieManagerLayer::new())
     ;
 

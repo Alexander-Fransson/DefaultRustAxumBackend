@@ -17,8 +17,11 @@ mod tests {
    use tower::ServiceExt;
 use tower_cookies::{Cookie, CookieManagerLayer};
 
-   use crate::{gate::cookie::AUTH_COOKIE_NAME, request_context::RequestContext};
-   use super::super::{mw_implant_request_context, mw_require_request_context};
+   use crate::{request_path::cookie::AUTH_COOKIE_NAME, request_context::RequestContext};
+   use super::super::{
+      mw_implant_request_context::_mw_implant_request_context, 
+      mw_require_request_context
+   };
 
 
    #[tokio::test]
@@ -135,7 +138,7 @@ use tower_cookies::{Cookie, CookieManagerLayer};
       let request_context_app = Router::new()
       .route("/request_context", get(return_request_context))
       .nest("/self_defeating", self_defeating_route)
-      .layer(middleware::from_fn(mw_implant_request_context))
+      .layer(middleware::from_fn(_mw_implant_request_context))
       .layer(CookieManagerLayer::new());
 
       let auth_token = format!("{}=1", AUTH_COOKIE_NAME); //Cookie::new(AUTH_COOKIE_NAME, "1");

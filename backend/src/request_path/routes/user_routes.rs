@@ -4,10 +4,9 @@ use axum::Json;
 use tracing::info;
 use crate::data_access::user_controller::UserController;
 use crate::data_access:: DataAccessManager;
-use crate::gate::error::GateResult;
+use crate::request_path::{Result, Error};
 use crate::views::user::{User, UserForRegister};
 use axum::routing::{get, post};
-use super::error::Error;
 
 pub fn user_routes(da: DataAccessManager) -> Router {
     Router::new()
@@ -19,10 +18,10 @@ pub fn user_routes(da: DataAccessManager) -> Router {
 async fn get_user_handler(
     State(da): State<DataAccessManager>, 
     Path(id): Path<i64>
-) -> GateResult<Json<User>> {
+) -> Result<Json<User>> {
 
     let user = UserController::get(&da, id).await
-    .map_err(|e| Error::DataAccess(e))?;
+    .map_err(|e| Error::DataAccess(e.to_string()))?;
 
     Ok(Json(user))
 }
@@ -30,7 +29,7 @@ async fn get_user_handler(
 async fn create_user_handler(
     State(da): State<DataAccessManager>, 
     Json(user): Json<UserForRegister>
-) -> GateResult<Json<User>> {
+) -> Result<Json<User>> {
 
     let user_password = user.password.clone();
     let user_email = user.email.clone();
@@ -39,7 +38,7 @@ async fn create_user_handler(
     info!("user: {:#?}", user);
 
     let user_id = UserController::create(&da, user).await
-    .map_err(|e| Error::DataAccess(e))?;
+    .map_err(|e| Error::DataAccess(e.to_string()))?;
 
     let user = User {
         id: user_id,
@@ -54,10 +53,10 @@ async fn create_user_handler(
 async fn delete_user_handler(
     State(da): State<DataAccessManager>, 
     Path(id): Path<i64>
-) -> GateResult<Json<&'static str>> {
+) -> Result<Json<&'static str>> {
 
     UserController::delete(&da, id).await
-    .map_err(|e| Error::DataAccess(e))?;
+    .map_err(|e| Error::DataAccess(e.to_string()))?;
 
     Ok(Json("user deleted"))
 }

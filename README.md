@@ -217,7 +217,7 @@ In the login function users are queried by email which are then filtered by pass
 
 *// the ctx resplve middleware runs the above function and if it retuns an error it removes the cookie from the tower cookies.
 
-// the ctx resolve middleware is added to the main routes.
+*// the ctx resolve middleware is added to the main routes.
 
 // then he creates a logof paload struct that just has logof as a bool varoable
 
