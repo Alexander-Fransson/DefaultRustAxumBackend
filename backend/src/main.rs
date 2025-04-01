@@ -45,7 +45,7 @@ async fn serve_server() -> Result<()> {
 
     let main_router = Router::new()
     .nest("/api/v1", plane_user_routes)
-    .nest("/api/v1", auth_routes)
+    .nest("/api/v1/auth", auth_routes)
     .nest("login_required/api/v1", user_routes_requiering_request_context)
     .route("/hello_word", get(|| async {"Hello, World!"}))
     .layer(middleware::from_fn_with_state(

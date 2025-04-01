@@ -13,7 +13,8 @@ pub enum Error {
 	Crypt(crypt::Error),
 	EntityNotFound,
 	IncorrectPassword,
-	JwtTokenWrongFormat
+	JwtTokenWrongFormat,
+	StrNotUuid(String)
 }
 
 impl From<crypt::Error> for Error {

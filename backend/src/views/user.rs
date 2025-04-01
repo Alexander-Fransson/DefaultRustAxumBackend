@@ -60,7 +60,7 @@ pub struct UserForValidation {
 #[derive(Debug, FromRow, GetStructFields)]
 pub struct UserForAuth {
     pub id: i64,
-    pub token_encryption_salt: String
+    pub token_encryption_salt: Uuid
 }
 
 impl GettableUser for UserForAuth {}

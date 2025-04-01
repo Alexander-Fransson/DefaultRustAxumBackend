@@ -24,12 +24,11 @@ pub async fn mw_implant_request_context_if_jwt(
 
     let request_context = request_context_from_jwt_cookie(da, &cookies).await;
 
-    if request_context.is_err() && 
-        !matches!(request_context, Err(Error::MissingAuthCookie)) {
-        delete_jwt_cookie(&cookies)?;   
+    if let Ok(rc) = request_context {
+        req.extensions_mut().insert(rc);
+    } else if !matches!(request_context, Err(Error::MissingAuthCookie)) {
+        delete_jwt_cookie(&cookies)?;
     }
-
-    req.extensions_mut().insert(request_context?);
 
     Ok(next.run(req).await)
 }
@@ -44,10 +43,10 @@ async fn request_context_from_jwt_cookie(da: DataAccessManager, cookies: &Cookie
     let user_for_auth: UserForAuth = UserController::get(&da, auth_token.user_id).await
     .map_err(|e| Error::DataAccess(e.to_string()))?;
 
-    auth_token.validate(&user_for_auth.token_encryption_salt)
+    auth_token.validate(&user_for_auth.token_encryption_salt.to_string())
     .map_err(|e| Error::InvalidJwt(e.to_string()))?;
 
-    set_jwt_cookie(&cookies, user_for_auth.id, &user_for_auth.token_encryption_salt)
+    set_jwt_cookie(&cookies, user_for_auth.id, &user_for_auth.token_encryption_salt.to_string())
     .map_err(|e| Error::FailedToSetJwtCookie(e.to_string()))?;
 
     RequestContext::new(user_for_auth.id)

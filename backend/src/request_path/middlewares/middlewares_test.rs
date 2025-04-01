@@ -4,25 +4,83 @@
 mod tests {
    use reqwest::RequestBuilder;
    use axum::{
-      body::Body,
+      body::{self, Body},
       extract::FromRequestParts,
-      http::{Request, StatusCode, request::Parts},
-      middleware::{self, Next},
+      http::{request::Parts, Request, StatusCode},
+      middleware::{self, from_fn_with_state, Next},
       response::{IntoResponse, Response},
       routing::get,
       Extension,
       Router
    };
-   use tower::ServiceBuilder;
+   use serial_test::serial;
+use tower::ServiceBuilder;
    use tower::ServiceExt;
-use tower_cookies::{Cookie, CookieManagerLayer};
-
-   use crate::{request_path::cookie::AUTH_COOKIE_NAME, request_context::RequestContext};
+   use tower_cookies::{Cookie, CookieManagerLayer};
+   use crate::{data_access::_get_data_access_manager_for_tests, request_path::routes::auth_routes, views::user::UserForRegister};
+   use crate::{request_context::RequestContext, request_path::{self, cookie::AUTH_COOKIE_NAME}};
    use super::super::{
       mw_implant_request_context::_mw_implant_request_context, 
-      mw_require_request_context
+      mw_require_request_context,
+      mw_implant_request_context_if_jwt,
    };
 
+   #[serial]
+   #[tokio::test]
+   async fn jwt_ok() -> request_path::Result<()> {
+
+      let da = _get_data_access_manager_for_tests().await;
+
+      // get the jwt token using login or register
+
+      let auth_routes = auth_routes(da.clone());
+
+      let locked_routes = Router::new()
+      .route("/", get(async || {"Youre in"}))
+      .layer(middleware::from_fn(mw_require_request_context));
+
+      let test_app = Router::new()
+      .route("/", get(async || {"the test app exists"}))
+      .nest("/auth", auth_routes)
+      .nest("/login/required", locked_routes)
+      .layer(from_fn_with_state(da.clone(), mw_implant_request_context_if_jwt))
+      .layer(CookieManagerLayer::new());
+
+      let user_for_register = UserForRegister {
+         name: "test_user".to_string(),
+         email: "test@email.com".to_string(),
+         password: "dont_tell_anyone".to_string(),
+      };
+      
+      let register_response = test_app
+      .oneshot(
+         Request::builder()
+         .uri("/auth/register")
+         .method("POST")
+         .header("Content-Type", "application/json")
+         .body(Body::from(serde_json::to_string(&user_for_register).unwrap()))
+         .unwrap()
+      )
+      .await
+      .unwrap();
+
+      assert!(register_response.status().is_success());
+
+      println!("register_response: {:#?}\n", register_response);
+      let cookie_from_register = register_response.headers().get("set-cookie").unwrap().to_str().unwrap();
+
+      println!("cookie_from_register: {}", cookie_from_register);
+
+      assert!(false);
+
+      // make a fake request with the jwt token
+
+      // check if the request context is correct
+
+      // then fail adn do the rest
+
+      Ok(())
+   }
 
    #[tokio::test]
    async fn implement_request_context_middlewares_ok() {

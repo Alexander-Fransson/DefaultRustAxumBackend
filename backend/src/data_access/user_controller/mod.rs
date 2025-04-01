@@ -61,8 +61,10 @@ impl UserController {
         };
         let encrypted_password = crypt::password::hash_password(&enc_content)?;
 
-        let query = format!("INSERT INTO {} (name, email, password, password_encryption_salt) VALUES ($1, $2, $3, $4)", Self::TABLE_NAME);
+        let query = format!("INSERT INTO {} (name, email, password, password_encryption_salt) VALUES ($1, $2, $3, $4) RETURNING id, token_encryption_salt", Self::TABLE_NAME);
         let connection = db.get_db_connection();
+
+        println!("{}",&query);
 
         let auth: UserForAuth = sqlx::query_as(&query)
         .bind(user.name)
@@ -71,7 +73,8 @@ impl UserController {
         .bind(pwd_salt_uuid)
         .fetch_one(connection)
         .await
-        .map_err(|e| Error::QueryFailed(e))?;
+        .map_err(|e| Error::QueryFailed(e))
+        ?;
 
         Ok(auth)
     }
@@ -104,8 +107,11 @@ impl UserController {
                 salt: utils::base64::string_to_base_64(&salt_string)
             };
 
+            let token_salt_uuid = Uuid::parse_str(&user.token_encryption_salt)
+            .map_err(|e| Error::StrNotUuid(e.to_string()))?;
+
             match password::validate_password(user.password, &enc_content) {
-                Ok(()) => return Ok(UserForAuth { id: user.id, token_encryption_salt: user.token_encryption_salt }),
+                Ok(()) => return Ok(UserForAuth { id: user.id, token_encryption_salt: token_salt_uuid }),
                 Err(crypt::Error::PasswordInvalid) => continue,
                 Err(e) => return Err(Error::Crypt(e))
             }

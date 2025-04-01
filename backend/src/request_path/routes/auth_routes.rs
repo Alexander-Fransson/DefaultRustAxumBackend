@@ -24,9 +24,9 @@ fn generate_success_json() -> Json<Value> {
 
 pub fn auth_routes(da: DataAccessManager) -> Router {
     Router::new()
-    .route("/auth/login", post(login_handler))
-    .route("/auth/logout", post(logout_handler))
-    .route("/auth/register", post(register_handler))
+    .route("/login", post(login_handler))
+    .route("/logout", post(logout_handler))
+    .route("/register", post(register_handler))
     .with_state(da)
 }
 
@@ -43,7 +43,7 @@ async fn login_handler(
     let token_parts = UserController::login_user(&da, credentials).await
     .map_err(|e| Error::DataAccess(e.to_string()))?;
 
-    set_jwt_cookie(&cookies, token_parts.id, &token_parts.token_encryption_salt)?;
+    set_jwt_cookie(&cookies, token_parts.id, &token_parts.token_encryption_salt.to_string())?;
 
     Ok(generate_success_json())
 }
@@ -53,10 +53,15 @@ async fn register_handler(
     State(da): State<DataAccessManager>,
     Json(user): Json<UserForRegister>
 ) -> Result<Json<Value>> {
-    let token_parts = UserController::register_user(&da, user).await
-    .map_err(|e| Error::DataAccess(e.to_string()))?;
+    println!("This runs");
 
-    set_jwt_cookie(&cookies, token_parts.id, &token_parts.token_encryption_salt)?;
+    let token_parts = UserController::register_user(&da, user).await
+    .map_err(|e| {
+        println!("{}", e);
+        Error::DataAccess(e.to_string())
+    })?;
+
+    set_jwt_cookie(&cookies, token_parts.id, &token_parts.token_encryption_salt.to_string())?;
     
     Ok(generate_success_json())
 }

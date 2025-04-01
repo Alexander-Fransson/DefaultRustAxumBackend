@@ -7,3 +7,14 @@ args = ["test", "--", "utils::utils_test::tests::"]
 command = "cargo"
 description = "Run the tests in the crypt crate"
 args = ["test", "--", "crypt::"]
+
+[tasks.test_jwt]
+command = "cargo"
+description = "Test jwt functionality, register and login"
+args = ["test", "--", "request_path::middlewares::middlewares_test::tests::jwt_ok", "--quiet"]
+env = { "RUST_BACKTRACE" = "0" }
+
+[tasks.test_user_controller]
+command = "cargo"
+description = "Run the tests in the user_controller crate"
+args = ["test", "--", "data_access::user_controller::"]
