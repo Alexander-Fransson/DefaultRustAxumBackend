@@ -107,11 +107,8 @@ impl UserController {
                 salt: utils::base64::string_to_base_64(&salt_string)
             };
 
-            let token_salt_uuid = Uuid::parse_str(&user.token_encryption_salt)
-            .map_err(|e| Error::StrNotUuid(e.to_string()))?;
-
             match password::validate_password(user.password, &enc_content) {
-                Ok(()) => return Ok(UserForAuth { id: user.id, token_encryption_salt: token_salt_uuid }),
+                Ok(()) => return Ok(UserForAuth { id: user.id, token_encryption_salt: user.token_encryption_salt }),
                 Err(crypt::Error::PasswordInvalid) => continue,
                 Err(e) => return Err(Error::Crypt(e))
             }

@@ -17,7 +17,7 @@ mod tests {
 use tower::ServiceBuilder;
    use tower::ServiceExt;
    use tower_cookies::{Cookie, CookieManagerLayer};
-   use crate::{data_access::_get_data_access_manager_for_tests, request_path::routes::auth_routes, views::user::UserForRegister};
+   use crate::{data_access::_get_data_access_manager_for_tests, request_path::routes::auth_routes, views::user::{UserForLogin, UserForRegister}};
    use crate::{request_context::RequestContext, request_path::{self, cookie::AUTH_COOKIE_NAME}};
    use super::super::{
       mw_implant_request_context::_mw_implant_request_context, 
@@ -52,7 +52,7 @@ use tower::ServiceBuilder;
          password: "dont_tell_anyone".to_string(),
       };
       
-      let register_response = test_app
+      let register_response = test_app.clone()
       .oneshot(
          Request::builder()
          .uri("/auth/register")
@@ -66,18 +66,67 @@ use tower::ServiceBuilder;
 
       assert!(register_response.status().is_success());
 
-      println!("register_response: {:#?}\n", register_response);
       let cookie_from_register = register_response.headers().get("set-cookie").unwrap().to_str().unwrap();
 
-      println!("cookie_from_register: {}", cookie_from_register);
+      let access_with_register_token_response = test_app.clone()
+      .oneshot(
+         Request::builder()
+         .uri("/login/required")
+         .method("GET")
+         .header("Cookie", cookie_from_register)
+         .body(Body::empty())
+         .unwrap()
+      ).await
+      .unwrap();
 
-      assert!(false);
+      assert!(access_with_register_token_response.status().is_success());
 
-      // make a fake request with the jwt token
+      let access_without_register_token_response = test_app.clone()
+      .oneshot(
+         Request::builder()
+         .uri("/login/required")
+         .method("GET")
+         .body(Body::empty())
+         .unwrap()
+      ).await
+      .unwrap();
 
-      // check if the request context is correct
+      assert!(!access_without_register_token_response.status().is_success());
 
-      // then fail adn do the rest
+      let user_for_login = UserForLogin {
+         email: user_for_register.email.clone(),
+         password: user_for_register.password.clone(),
+      };
+
+      let login_response = test_app.clone()
+      .oneshot(
+         Request::builder()
+         .uri("/auth/login")
+         .method("POST")
+         .header("Content-Type", "application/json")
+         .body(Body::from(serde_json::to_string(&user_for_login).unwrap()))
+         .unwrap()
+      ).await
+      .unwrap();
+
+      println!("{:#?}", login_response);
+
+      assert!(login_response.status().is_success());
+
+      let cookie_from_login_response = login_response.headers().get("set-cookie").unwrap().to_str().unwrap();
+
+      let access_with_login_token_response = test_app.clone()
+      .oneshot(
+         Request::builder()
+         .uri("/login/required")
+         .method("GET")
+         .header("Cookie", cookie_from_login_response)
+         .body(Body::empty())
+         .unwrap()
+      ).await
+      .unwrap();
+
+      assert!(access_with_login_token_response.status().is_success());
 
       Ok(())
    }
