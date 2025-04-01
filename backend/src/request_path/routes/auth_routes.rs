@@ -53,7 +53,6 @@ async fn register_handler(
     State(da): State<DataAccessManager>,
     Json(user): Json<UserForRegister>
 ) -> Result<Json<Value>> {
-    println!("This runs");
 
     let token_parts = UserController::register_user(&da, user).await
     .map_err(|e| {

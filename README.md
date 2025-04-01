@@ -157,72 +157,17 @@ In backend/src/views/user.rs tables to handle login and validation of passwords 
 I also made a list by name base and user controller but that is mostly irrelevant for authentication.
 To handle the encryption and hashing of the password I created a new crypt crate. 
 Here I created the hash and validate password functions in backend/src/crypt/password.rs. 
-For the encryption I used argon2 for bacouse it uses high memory consumption and is slow which makes it harder for attackers to try billions of guesses including with GPUs and ASICs. 
-Other alternative encryptiion methods are sha512, Poly1305 which is verry fast and used for message encryption and Blake2b which is both fast and secure, Speed is bad in passwordhashing though so poly can be usde for message encryption and blake can be used for jwt encryption. 
+For the encryption I used argon2 bacouse it uses high memory consumption and is slow which makes it harder for attackers to try billions of guesses including with GPUs and ASICs. 
+Other alternative encryptiion methods are sha512 which is the standard for jwt and present in many lbraries as well as Poly1305 which is verry fast and used for message encryption and Blake2b which is both fast and secure and just a better but less established version of sha, Speed is bad in passwordhashing though so poly can be usde for message encryption and blake can be used for jwt encryption. 
 I also created an encrypt into base64 function and added the base64 create. 
+
+For the jwt token creation I first created a bunch of time and base 64 util functions in backend/src/utils. Then I created the blake2b encryption function in backend/src/crypt/mod.rs. 
+This function is used by the jwt token struct and its implemented functions in backend/src/crypt/jwt_token/mod.rs. The main things here are the new and validate functions in addition to from string and to string. To generate and validate the blake2b mac you need a key and a salt provided by the user so I added a a key and the token duration to the env and created a new column for the token_salt on the db although I probably could just have used the password salt since they are both just Uuid's.  
 
 Then in backend/src/data_access/user_controller/mod.rs I created a login and register user function.
 Register uses the uuid crate to generate a salt and transforms it to b64 to later use it as the encryption content for hashing the password.
 In the login function users are queried by email which are then filtered by password.
+Then in backend/src/request_path/cookie.rs I created the set cookie jwt cookie and delte jwt cookie functions.
+Set jwt cookie is used by the login and regiser handlers and remove jwt cookie is used by the lougout.
 
-// I created string to b64 and vice versa + tests in backend/src/utils/base64.rs
-// I created token struct and implemented string and display in backend/src/crypt/jwt_token/mod.rs
-// I also made new and validate functions and tested them
-// I made and create and remove jwt_cookie functions in /home/megatron/Documents/DefaultRustAxumBackend/backend/src/gate/cookie.rs
-
-
-
-////////////////////
-
-// continue with the generateon of a jwt token and using it for authentication in the request context generation.
-
-// what shall be created is a create_token function that returns user_id_b64u. expiration_b64u.singanture_b64u
-
-*// he uses the time library 
-
-*// he creates time utils like 
-* now_utc which returns an offset date time struct 
-* format_time which takes the offset date time and returns a string
-* now_utc_plus_sec_str which takes a f64 and returns a string of such many seconds after now
-* parse_utc which takes a str& and returns an offsetdatetime
-
-*// he creates b64 utils
-* b64 encode & decode
-
-*// he creates a token struct
-
-*// he creates generate token and token sign into b64u private functions in crypt/token
-
-*// he aso creates a validate token private function
-
-*// he creates public functions that use each fuction
-
-*// he implements display for token struct, this is used to mkae the toekn a string of the right format
-
-*// he also implements the from str for token which takes a x.x.x.string and returns a token struct where ident and expiration is decoded from b64
-
-*// then after making tests he creates the priveate generate token function content and returns the token struct
-
-*// he creates the content for the validate token sign and expiration
-
-*// he creates the content for the token sign into b64u which uses the sha512 encrypt function to generate a signature, this signature is then evaluated en the validate token function
-
-*// the in web/mod he creates set token cookie and remove token cookie functions in adition to an AUTH_TOKEN cookie name const.
-
-*// set token cookie generates a token from the users id and token salt and pits it into a cookie which is added to the tower cookies object
-
-*// he then changes the web/routs/login function to set a cookie
-
-*// then he creates a ctx_resolve function wihich gets the auth cookie, parses the cookie string to a token struct, gets a user theough the UserBmc, validates the token using the users token salt, updates the token by setting a new and creates new request context. 
-
-*// the ctx resplve middleware runs the above function and if it retuns an error it removes the cookie from the tower cookies.
-
-*// the ctx resolve middleware is added to the main routes.
-
-// then he creates a logof paload struct that just has logof as a bool varoable
-
-// he then creates a remove cookie function in web mod
-
-// then he just creates a logoff handler which just removes the cookie
-
-
+Lastly I made a new implement request context middleware in backend/src/request_path/middlewares/mw_implant_request_context.rs. This function validates the token in your cookie and implements the request context if it is valid that is approved by the require request context middleare created earlyer. If it is not it removes the authentication cookie.

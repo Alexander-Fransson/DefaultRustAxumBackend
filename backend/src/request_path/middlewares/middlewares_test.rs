@@ -25,14 +25,13 @@ use tower::ServiceBuilder;
       mw_implant_request_context_if_jwt,
    };
 
+   // next step is the error handling
+
    #[serial]
    #[tokio::test]
    async fn jwt_ok() -> request_path::Result<()> {
 
       let da = _get_data_access_manager_for_tests().await;
-
-      // get the jwt token using login or register
-
       let auth_routes = auth_routes(da.clone());
 
       let locked_routes = Router::new()
@@ -52,6 +51,8 @@ use tower::ServiceBuilder;
          password: "dont_tell_anyone".to_string(),
       };
       
+      // test with register
+
       let register_response = test_app.clone()
       .oneshot(
          Request::builder()
@@ -92,6 +93,8 @@ use tower::ServiceBuilder;
       .unwrap();
 
       assert!(!access_without_register_token_response.status().is_success());
+
+      // test with login
 
       let user_for_login = UserForLogin {
          email: user_for_register.email.clone(),
