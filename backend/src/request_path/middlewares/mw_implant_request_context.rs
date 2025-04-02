@@ -12,9 +12,6 @@ use crate::request_context::RequestContext;
 use crate::views::user::UserForAuth;
 use crate::request_path::cookie::{set_jwt_cookie ,AUTH_COOKIE_NAME, delete_jwt_cookie};
 
-// the extra error stuff is pretty tedipus maybe rename gate to request and move all the error to the gate error
-// also test this function
-
 pub async fn mw_implant_request_context_if_jwt(
     State(da): State<DataAccessManager>,
     cookies: Cookies,

@@ -171,3 +171,16 @@ Then in backend/src/request_path/cookie.rs I created the set cookie jwt cookie a
 Set jwt cookie is used by the login and regiser handlers and remove jwt cookie is used by the lougout.
 
 Lastly I made a new implement request context middleware in backend/src/request_path/middlewares/mw_implant_request_context.rs. This function validates the token in your cookie and implements the request context if it is valid that is approved by the require request context middleare created earlyer. If it is not it removes the authentication cookie.
+
+### 11 Client error
+
+// he crates a client error in the src/error
+// he derives strum macros as ref str from strum_macros which is a crate, 
+// he implement a client status and error function for the main error
+// this just matches the server errors to client errors
+// then in the into response implementation he inserts the self into the extension mut
+// then in main he creates the main response mapper
+// then he starts building the server log line in src/log
+
+
+// grpc is better for chat apps uhhh

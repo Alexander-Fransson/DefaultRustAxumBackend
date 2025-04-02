@@ -12,7 +12,11 @@ pub enum Error {
 	Utils(utils::error::Error),
 	Crypt(crypt::Error),
 	EntityNotFound,
+
+	// login
 	IncorrectPassword,
+
+	// jwt
 	JwtTokenWrongFormat,
 }
 
