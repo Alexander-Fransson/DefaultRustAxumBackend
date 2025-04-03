@@ -6,11 +6,11 @@ use axum::{
     }
 };
 use super::custom_extractors;
-use crate::{crypt, request_context};
+use crate::{crypt, data_access, request_context};
 
 pub type Result<T> = core::result::Result<T, Error>;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Error {
     //middleware
     MissingAuthCookie,
@@ -21,13 +21,13 @@ pub enum Error {
     Extractor(custom_extractors::Error),
 
     // other modules
-    Crypt(crypt::Error),
-    DataAccess(String),
+    Crypt(String),
+    DataAccess(data_access::Error),
 }
 
 impl From<crypt::Error> for Error {
     fn from(error: crypt::Error) -> Self {
-        Error::Crypt(error)
+        Error::Crypt(error.to_string())
     }
 }
 
@@ -39,10 +39,10 @@ impl From<custom_extractors::Error> for Error {
 
 impl IntoResponse for Error {
 	fn into_response(self) -> Response {
-		// magic is to happen in map response middleware ServerError -> ClientError 
+        let main_error = crate::error::Error::RequestPathError(self);
 
-		let mut response = StatusCode::NOT_FOUND.into_response();
-		response.extensions_mut().insert(self.to_string());
+		let mut response = StatusCode::INTERNAL_SERVER_ERROR.into_response();
+		response.extensions_mut().insert(main_error);
 
 		response
 	}

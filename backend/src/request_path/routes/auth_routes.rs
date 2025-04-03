@@ -41,7 +41,7 @@ async fn login_handler(
     Json(credentials): Json<UserForLogin>
 ) -> Result<Json<Value>> {
     let token_parts = UserController::login_user(&da, credentials).await
-    .map_err(|e| Error::DataAccess(e.to_string()))?;
+    .map_err(|e| Error::DataAccess(e))?;
 
     set_jwt_cookie(&cookies, token_parts.id, &token_parts.token_encryption_salt.to_string())?;
 
@@ -57,7 +57,7 @@ async fn register_handler(
     let token_parts = UserController::register_user(&da, user).await
     .map_err(|e| {
         println!("{}", e);
-        Error::DataAccess(e.to_string())
+        Error::DataAccess(e)
     })?;
 
     set_jwt_cookie(&cookies, token_parts.id, &token_parts.token_encryption_salt.to_string())?;

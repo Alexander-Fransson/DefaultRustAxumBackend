@@ -19,24 +19,32 @@ pub enum ErrorForClient {
 	INTERNAL_ERROR
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Error {
     CannotFindEnvWithSuchName(&'static str),
     FailedToParse(&'static str),
 	DataAccessError(data_access::Error),
 	RequestPathError(request_path::Error),
-	Io(std::io::Error),
+	Io(String),
 	Utils(utils::Error)
 }
 
 impl Error {
 	pub fn to_client_error(&self) -> (StatusCode,ErrorForClient) {
 		match self {
-			Self::DataAccessError(data_access::Error::IncorrectPassword) 
-			=> (StatusCode::UNAUTHORIZED, ErrorForClient::LOGIN_FAILED),
+			Self::DataAccessError(data_access::Error::IncorrectPassword) |
+			Self::RequestPathError(
+				request_path::Error::DataAccess(
+					data_access::Error::IncorrectPassword
+				)
+			) => (StatusCode::UNAUTHORIZED, ErrorForClient::LOGIN_FAILED),
 
-			Self::DataAccessError(data_access::Error::EntityNotFound) 
-			=> (StatusCode::NOT_FOUND, ErrorForClient::ENTITY_NOT_FOUND),
+			Self::DataAccessError(data_access::Error::EntityNotFound) |
+			Self::RequestPathError(
+				request_path::Error::DataAccess(
+					data_access::Error::EntityNotFound
+				)
+			) => (StatusCode::NOT_FOUND, ErrorForClient::ENTITY_NOT_FOUND),
 
 			Self::RequestPathError(request_path::Error::MissingAuthCookie) |
 			Self::RequestPathError(request_path::Error::InvalidJwt(_)) |
@@ -54,10 +62,14 @@ impl Error {
 
 impl IntoResponse for Error {
 	fn into_response(self) -> Response {
+
+		println!("Error is running");
 		// magic is to happen in map response middleware ServerError -> ClientError 
 
-		let mut response = StatusCode::NOT_FOUND.into_response();
-		response.extensions_mut().insert(self.to_string());
+		print!("ERROR WAS SAYING {:#?}\n", self);
+
+		let mut response = StatusCode::INTERNAL_SERVER_ERROR.into_response();
+		response.extensions_mut().insert(self); 
 
 		response
 	}
@@ -83,7 +95,7 @@ impl From<data_access::Error> for Error {
 
 impl From<std::io::Error> for Error {
 	fn from(err: std::io::Error) -> Self {
-		Self::Io(err)
+		Self::Io(err.to_string())
 	}
 }
 

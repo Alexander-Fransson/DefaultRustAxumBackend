@@ -2,11 +2,11 @@ use serde_json;
 
 pub type Result<T> = core::result::Result<T, Error>;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Error {
     
 	// struct to hashmap
-	SerdeJson(serde_json::error::Error),
+	SerdeJson(String),
 	ExpectedStruct,
 	FailedToTurnJsonValueIntoMap,
 	FailedToTurnJsonValueIntoStr,
@@ -22,7 +22,7 @@ pub enum Error {
 
 impl From<serde_json::error::Error> for Error {
 	fn from(err: serde_json::error::Error) -> Self {
-		Self::SerdeJson(err)
+		Self::SerdeJson(err.to_string())
 	}
 }
 

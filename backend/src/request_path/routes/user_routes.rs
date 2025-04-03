@@ -21,7 +21,7 @@ async fn get_user_handler(
 ) -> Result<Json<User>> {
 
     let user = UserController::get(&da, id).await
-    .map_err(|e| Error::DataAccess(e.to_string()))?;
+    .map_err(|e| Error::DataAccess(e))?;
 
     Ok(Json(user))
 }
@@ -38,7 +38,7 @@ async fn create_user_handler(
     info!("user: {:#?}", user);
 
     let user_id = UserController::create(&da, user).await
-    .map_err(|e| Error::DataAccess(e.to_string()))?;
+    .map_err(|e| Error::DataAccess(e))?;
 
     let user = User {
         id: user_id,
@@ -56,7 +56,7 @@ async fn delete_user_handler(
 ) -> Result<Json<&'static str>> {
 
     UserController::delete(&da, id).await
-    .map_err(|e| Error::DataAccess(e.to_string()))?;
+    .map_err(|e| Error::DataAccess(e))?;
 
     Ok(Json("user deleted"))
 }

@@ -7,9 +7,10 @@ pub mod test {
     //use crate::log::tracer_config::enable_tracing;
     use crate::serve_server;
     use crate::error::Result;
-    use crate::views::user::{UserForRegister, User};
+    use crate::views::user::{User, UserForLogin, UserForRegister};
 
     //make tests sequential
+
 
     fn run_server_sub_process() -> tokio::task::JoinHandle<()> {
         tokio::spawn(async move {
@@ -18,6 +19,44 @@ pub mod test {
                 println!("error: {}", e);
             }
         })
+    }
+
+
+    #[serial]
+    #[tokio::test]
+    async fn main_response_mapper_ok() -> Result<()> {
+        let server = run_server_sub_process();
+        tokio::time::sleep(std::time::Duration::from_millis(500)).await;
+
+        // failed login
+
+        let client = reqwest::Client::new();
+
+        let request_url = format!("http://{}/auth/login", get_env_variables().LISTENER_URL);
+
+        let login_params = UserForLogin {
+            email: "test@email.com".to_string(),
+            password: "wrong password".to_string()
+        };
+
+        let bad_login_body = serde_json::to_string(&login_params).unwrap();
+
+        let response = client
+        .post(request_url)
+        .header("Content-Type", "application/json") 
+        .body(bad_login_body)
+        .send().await.unwrap()
+        ;
+
+        let text_response = response.text().await.unwrap();
+
+        print!("text_response: {}",text_response);
+
+        assert!(&text_response.contains("ENTITY_NOT_FOUND"));
+
+        server.abort();
+
+        Ok(())
     }
 
     #[serial]
@@ -33,6 +72,9 @@ pub mod test {
         let request_url = format!("http://{}/hello_word", get_env_variables().LISTENER_URL);
 
         let response = client.get(request_url).send().await.unwrap();
+
+        println!("response: {:#?}", response);
+
         assert_eq!(response.status(), reqwest::StatusCode::OK);
 
         server.abort();

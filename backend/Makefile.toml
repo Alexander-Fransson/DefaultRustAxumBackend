@@ -18,3 +18,9 @@ env = { "RUST_BACKTRACE" = "0" }
 command = "cargo"
 description = "Run the tests in the user_controller crate"
 args = ["test", "--", "data_access::user_controller::"]
+
+[tasks.test_integration]
+command = "cargo"
+description = "Run the integration tests"
+args = ["test", "--", "integration_tests::test::", "--quiet"]
+env = { "RUST_BACKTRACE" = "0" }

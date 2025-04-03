@@ -73,7 +73,7 @@ impl UserController {
         .bind(pwd_salt_uuid)
         .fetch_one(connection)
         .await
-        .map_err(|e| Error::QueryFailed(e))
+        .map_err(|e| Error::QueryFailed(e.to_string()))
         ?;
 
         Ok(auth)
@@ -91,13 +91,11 @@ impl UserController {
         .bind(email)
         .fetch_all(connection)
         .await
-        .map_err(|e| Error::QueryFailed(e))?;
+        .map_err(|e| Error::QueryFailed(e.to_string()))?;
         
         if users_with_email.is_empty() {
             return Err(Error::EntityNotFound);
         }
-
-        println!("USERS {:?}", users_with_email);
 
         // checks if the password provided encrypted with the password encryption salt is the same as the users password
         for user in users_with_email {
@@ -110,7 +108,7 @@ impl UserController {
             match password::validate_password(user.password, &enc_content) {
                 Ok(()) => return Ok(UserForAuth { id: user.id, token_encryption_salt: user.token_encryption_salt }),
                 Err(crypt::Error::PasswordInvalid) => continue,
-                Err(e) => return Err(Error::Crypt(e))
+                Err(e) => return Err(Error::Crypt(e.to_string()))
             }
         }
 

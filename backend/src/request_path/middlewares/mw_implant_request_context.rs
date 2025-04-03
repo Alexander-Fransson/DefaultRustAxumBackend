@@ -38,7 +38,7 @@ async fn request_context_from_jwt_cookie(da: DataAccessManager, cookies: &Cookie
     let auth_token = JwtToken::from_str(&auth_token_str)?;
 
     let user_for_auth: UserForAuth = UserController::get(&da, auth_token.user_id).await
-    .map_err(|e| Error::DataAccess(e.to_string()))?;
+    .map_err(|e| Error::DataAccess(e))?;
 
     auth_token.validate(&user_for_auth.token_encryption_salt.to_string())
     .map_err(|e| Error::InvalidJwt(e.to_string()))?;

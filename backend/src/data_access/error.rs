@@ -5,12 +5,12 @@ use crate::crypt;
 
 pub type Result<T> = core::result::Result<T, Error>;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Error {
-	DbSettupError(db_setup::Error),
-	QueryFailed(sqlx::Error),
-	Utils(utils::error::Error),
-	Crypt(crypt::Error),
+	DbSettupError(String),
+	QueryFailed(String),
+	Utils(String),
+	Crypt(String),
 	EntityNotFound,
 
 	// login
@@ -22,25 +22,25 @@ pub enum Error {
 
 impl From<crypt::Error> for Error {
 	fn from(err: crypt::Error) -> Self {
-		Self::Crypt(err)
+		Self::Crypt(err.to_string())
 	}
 }
 
 impl From<db_setup::Error> for Error {
 	fn from(err: db_setup::Error) -> Self {
-		Self::DbSettupError(err)
+		Self::DbSettupError(err.to_string())
 	}
 }
 
 impl From<sqlx::Error> for Error {
 	fn from(err: sqlx::Error) -> Self {
-		Self::QueryFailed(err)
+		Self::QueryFailed(err.to_string())
 	}
 }
 
 impl From<utils::error::Error> for Error {
 	fn from(err: utils::error::Error) -> Self {
-		Self::Utils(err)
+		Self::Utils(err.to_string())
 	}
 }
 

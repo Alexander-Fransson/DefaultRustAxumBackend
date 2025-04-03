@@ -25,7 +25,7 @@ Unpin + Send + GetStructFields // to make it work well with async functions
     .bind(id)
     .fetch_one(connection)
     .await
-    .map_err(|e| Error::QueryFailed(e))?;
+    .map_err(|e| Error::QueryFailed(e.to_string()))?;
 
     Ok(row)
 }
@@ -44,7 +44,7 @@ Unpin + Send + GetStructFields
     let rows: Vec<T> = sqlx::query_as(&query_string)
     .fetch_all(connection)
     .await
-    .map_err(|e| Error::QueryFailed(e))?;
+    .map_err(|e| Error::QueryFailed(e.to_string()))?;
 
     Ok(rows)
 }
@@ -66,7 +66,7 @@ Unpin + Send + GetStructFields
     .bind(format!("%{}%", &name))
     .fetch_all(connection)
     .await
-    .map_err(|e| Error::QueryFailed(e))?;
+    .map_err(|e| Error::QueryFailed(e.to_string()))?;
 
     Ok(rows)
 }
@@ -86,7 +86,7 @@ T: Serialize {
     let (id,) = sqlx::query_as::<_,(i64,)>(&query_string)
     .fetch_one(connection)
     .await
-    .map_err(|e| Error::QueryFailed(e))?;
+    .map_err(|e| Error::QueryFailed(e.to_string()))?;
 
     Ok(id)
 }

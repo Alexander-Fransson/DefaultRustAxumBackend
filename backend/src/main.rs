@@ -2,6 +2,7 @@ use axum::http::{Method, Uri};
 use axum::response::{IntoResponse, Response};
 use config_env::get_env_variables;
 use request_context::RequestContext;
+use request_path::custom_extractors::ExtractorResult;
 use request_path::routes::{auth_routes, user_routes};
 use log::tracer_config::enable_tracing;
 use serde_json::json;
@@ -50,8 +51,8 @@ async fn serve_server() -> Result<()> {
 
     let main_router = Router::new()
     .nest("/api/v1", plane_user_routes)
-    .nest("/api/v1/auth", auth_routes)
-    .nest("login_required/api/v1", user_routes_requiering_request_context)
+    .nest("/auth", auth_routes)
+    .nest("/login_required/api/v1", user_routes_requiering_request_context)
     .route("/hello_word", get(|| async {"Hello, World!"}))
     .layer(middleware::map_response(main_response_mapper))
     .layer(middleware::from_fn_with_state(
@@ -73,16 +74,23 @@ async fn serve_server() -> Result<()> {
 }
 
 async fn main_response_mapper(
-    //request_context: Option<RequestContext>,
-    uri: Uri,
-    req_method: Method,
+    _request_context: ExtractorResult<RequestContext>,
+    _uri: Uri,
+    _req_method: Method,
     res: Response
 ) -> Response {
     // hmm it seams like it rejects the request context, look into what that is about
     
     let request_id = Uuid::new_v4();
     let service_error = res.extensions().get::<Error>();
+
+    // println!("RES IS SAYING {:#?}", res);
+
+    println!("SERVICE ERROR WAS SAYING {:#?}", service_error);
+
     let client_error = service_error.map(|e| e.to_client_error());
+
+    println!("CLIENT ERROR WAS SAYING {:#?}", client_error);
 
     let err_response = client_error
     .as_ref()
@@ -97,6 +105,8 @@ async fn main_response_mapper(
     });
 
     // log
+
+    //println!("TEHE RESPONSE WAS SAYING {:#?}", err_response);
 
     err_response.unwrap_or(res)
 }
