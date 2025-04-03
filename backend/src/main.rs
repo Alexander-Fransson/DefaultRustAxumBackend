@@ -1,6 +1,7 @@
 use axum::http::{Method, Uri};
 use axum::response::{IntoResponse, Response};
 use config_env::get_env_variables;
+use log::request_log_line::log_request;
 use request_context::RequestContext;
 use request_path::custom_extractors::ExtractorResult;
 use request_path::routes::{auth_routes, user_routes};
@@ -75,10 +76,10 @@ async fn serve_server() -> Result<()> {
 
 async fn main_response_mapper(
     _request_context: ExtractorResult<RequestContext>,
-    _uri: Uri,
-    _req_method: Method,
+    uri: Uri,
+    req_method: Method,
     res: Response
-) -> Response {
+) -> Result<Response> {
     // hmm it seams like it rejects the request context, look into what that is about
     
     let request_id = Uuid::new_v4();
@@ -105,8 +106,9 @@ async fn main_response_mapper(
     });
 
     // log
+    log_request(request_id, req_method, uri, service_error)?;
 
     //println!("TEHE RESPONSE WAS SAYING {:#?}", err_response);
 
-    err_response.unwrap_or(res)
+    Ok(err_response.unwrap_or(res))
 }

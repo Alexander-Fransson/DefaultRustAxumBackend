@@ -174,13 +174,9 @@ Lastly I made a new implement request context middleware in backend/src/request_
 
 ### 11 Client error
 
-// he crates a client error in the src/error
-// he derives strum macros as ref str from strum_macros which is a crate, 
-// he implement a client status and error function for the main error
-// this just matches the server errors to client errors
-// then in the into response implementation he inserts the self into the extension mut
-// then in main he creates the main response mapper
-// then he starts building the server log line in src/log
+I made a client error struct and in the src/error file and made a function that coverts normal errors to that error.
+The client error derives as ref from strum macros converts an &Option<T> to an Option<&T> which is used in the main response mapper in src/main.rs.
+I also changed the request_path error to return main errors when turned into responses.
+Lastly I created a request log line in src/log/request_log_line where people with access to the server can see the actual error, not just the client one. 
 
-
-// grpc is better for chat apps uhhh
+// grpc is better the crud uhhh
